@@ -60,15 +60,15 @@
 
 			// Directly adds a value to storage
 			var setItem = function(key, value) {
-				var promise = localforage.setItem(prefix + key, value);
-
-				if(notify.setItem) {
-					return promise.then(function() {
+				var deferred = $q.defer();
+				localforage.setItem(prefix + key, value).then(function() {
+					if(notify.setItem) {
 						$rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: value, driver: localforage.driver});
-					});
-				} else {
-					return promise;
-				}
+					}
+					deferred.resolve();
+				});
+
+				return deferred.promise;
 			};
 
 			// Directly get a value from storage
@@ -110,11 +110,19 @@
 
 			// Return the key for item at position n
 			var getKeyAt = function(n) {
-				return localforage.key(n);
+				var deferred = $q.defer(); // using $q to avoid using $apply
+				localforage.key(n).then(function(key) {
+					deferred.resolve(key);
+				});
+				return deferred.promise;
 			};
 
 			var getLength = function() {
-				return localforage.length();
+				var deferred = $q.defer(); // using $q to avoid using $apply
+				return localforage.length().then(function(length) {
+					deferred.resolve(length);
+				});
+				return deferred.promise;
 			}
 
 			// Return the list of keys stored for this application
@@ -142,7 +150,7 @@
 			 * Bind - let's you directly bind a LocalForage value to a $scope variable
 			 * @param {Angular $scope} $scope - the current scope you want the variable available in
 			 * @param {String} key - the name of the variable you are binding
-			 * @param {Object} opts - (optional) custom options like default value or unique store name
+			 * @param {String} key - the name of the variable you are binding OR {Object} opts - key and custom options like default value or unique store name
 			 * Here are the available options you can set:
 			 * * defaultValue: the default value
 			 * * storeName: add a custom store key value instead of using the scope variable name
