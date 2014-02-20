@@ -28,5 +28,8 @@
   "devDependencies": {
     "angular": "~1.2.13",
     "angular-mocks": "~1.2.13"
+  },
+  "dependencies": {
+    "localforage": "*"
   }
 }
