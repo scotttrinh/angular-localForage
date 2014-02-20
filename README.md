@@ -132,3 +132,19 @@ angular.module('yourModule', ['LocalForageModule'])
     $localForageProvider.setDriver('localStorageWrapper');
 }]);
 ```
+## Unit tests
+
+To retrieve all things needed, first run
+
+```
+bower install
+npm install
+```
+
+After, you just have to run :
+
+```
+karma start
+```
+
+It will launch once Chrome and Firefox, edit karma.conf.js if you want to change something.

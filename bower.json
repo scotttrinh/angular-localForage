@@ -8,14 +8,14 @@
   ],
   "description": "Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)",
   "keywords": [
-	"localstorage",
-	"local-storage",
-	"indexDB",
-	"webSQL",
-	"storage",
-	"module",
-	"angular",
-	"angularJS"
+    "localstorage",
+    "local-storage",
+    "indexDB",
+    "webSQL",
+    "storage",
+    "module",
+    "angular",
+    "angularJS"
   ],
   "license": "MIT",
   "ignore": [
@@ -24,5 +24,9 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "devDependencies": {
+    "angular": "~1.2.13",
+    "angular-mocks": "~1.2.13"
+  }
 }
