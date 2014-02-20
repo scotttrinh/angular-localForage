@@ -3,7 +3,7 @@ angular-localForage
 
 Angular service &amp; directive for https://github.com/mozilla/localForage (Offline storage, improved.)
 
-This angularJS module is a rewrite of [angular-local-storage by grevory](https://github.com/grevory/angular-local-storage) and (angularLocalStorage by agrublev)[https://github.com/agrublev/angularLocalStorage] using the excellent Mozilla library [localForage](https://github.com/mozilla/localForage)
+This angularJS module is a rewrite of [angular-local-storage by grevory](https://github.com/grevory/angular-local-storage) and [angularLocalStorage by agrublev](https://github.com/agrublev/angularLocalStorage) using the excellent Mozilla library [localForage](https://github.com/mozilla/localForage)
 
 
 ----------
