@@ -9,6 +9,7 @@ module.exports = function (config) {
         files      : [
             'bower_components/angular/angular.js',
             'bower_components/angular-mocks/angular-mocks.js',
+            'bower_components/localforage/dist/localforage.min.js',
             'angular-localForage.js',
             'tests/angular-localForage.js'
         ],
