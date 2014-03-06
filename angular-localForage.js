@@ -119,7 +119,7 @@
 
 			var getLength = function() {
 				var deferred = $q.defer(); // using $q to avoid using $apply
-				return localforage.length().then(function(length) {
+				localforage.length().then(function(length) {
 					deferred.resolve(length);
 				});
 				return deferred.promise;
