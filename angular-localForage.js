@@ -37,7 +37,7 @@
 
 		// Getter for the storage driver
 		var getDriver = function() {
-			return localforage.driver;
+			return localforage.driver();
 		};
 
 		// Setter for notification config, itemSet & itemRemove should be booleans
