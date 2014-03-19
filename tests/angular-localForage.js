@@ -29,27 +29,27 @@ describe('Module: LocalForageModule', function () {
     });
 
     it('service:getDriver should be defined', function () {
-        expect(myService.getDriver).toBeDefined();
+        expect(myService.driver).toBeDefined();
     });
 
     it('service:set should be defined', function () {
-        expect(myService.set).toBeDefined();
+        expect(myService.setItem).toBeDefined();
     });
 
     it('service:get should be defined', function () {
-        expect(myService.get).toBeDefined();
+        expect(myService.getItem).toBeDefined();
     });
 
     it('service:remove should be defined', function () {
-        expect(myService.remove).toBeDefined();
+        expect(myService.removeItem).toBeDefined();
     });
 
     it('service:clearAll should be defined', function () {
-        expect(myService.clearAll).toBeDefined();
+        expect(myService.clear).toBeDefined();
     });
 
     it('service:clearAll should works', function () {
-        var promise_expected = myService.clearAll();
+        var promise_expected = myService.clear();
 //        rootScope.$digest();
 //        expect(spies.getKeys).toHaveBeenCalled();
 //        expect(promise_expected).toBeDefined();
@@ -63,7 +63,7 @@ describe('Module: LocalForageModule', function () {
 
     it('service:getKeyAt should be defined', function () {
 
-        expect(myService.getKeyAt).toBeDefined();
+        expect(myService.key).toBeDefined();
     });
 
     it('service:getKeys should be defined', function () {
@@ -71,14 +71,14 @@ describe('Module: LocalForageModule', function () {
     });
 
     it('service:getLength should be defined', function () {
-        expect(myService.getLength).toBeDefined();
+        expect(myService.length).toBeDefined();
         expect(typeof myService.getLength).toBe('function');
     });
 
     it('service:getLength should works', function () {
         var length_expected = myService.getLength();
 
-        expect(typeof myService.getLength).toBeDefined();
+        expect(typeof myService.length).toBeDefined();
     });
 
     it('service:bind should be defined', function () {

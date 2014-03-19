@@ -4,18 +4,12 @@
 
 (function(window, angular, undefined) {
 	'use strict';
-	
+
 	var angularLocalForage = angular.module('LocalForageModule', ['ng']);
 	angularLocalForage.provider('$localForage', function() {
-		/**
-		 * You should set a prefix to avoid overwriting any local storage variables from the rest of your app
-		 * e.g. $localForageProvider.setPrefix('youAppName');
-		 * With provider you can use config as this:
-		 * myApp.config(function ($localForageProvider) {
-         *  $localForageProvider.prefix = 'yourAppName';
-	     * });
-		 */
-		this.prefix = 'lf'; // default prefix
+        window.localForageConfig = {
+            name: 'lf' // default prefix
+        };
 
 		// Send signals for each of the following actions ?
 		this.notify = {
@@ -25,7 +19,10 @@
 
 		// Setter for the prefix
 		this.setPrefix = function(prefix) {
-			this.prefix = prefix;
+            if(angular.isDefined(prefix) && prefix !== window.localForageConfig.name) {
+                window.localForageConfig.name = prefix;
+                localforage._initStorage(window.localForageConfig);
+            }
 		};
 
 		// Setter for the storage driver
@@ -36,7 +33,7 @@
 		this.setDriver = setDriver;
 
 		// Getter for the storage driver
-		var getDriver = function() {
+		var driver = function() {
 			return localforage.driver();
 		};
 
@@ -48,24 +45,52 @@
 			};
 		};
 
+        this.config = function(config) {
+            if(angular.isObject(config)) {
+                window.localForageConfig = config;
+                if(angular.isDefined(config.driver)) {
+                    return setDriver(config.driver);
+                } else {
+                    return localforage._initStorage(config);
+                }
+            }
+        }
+
 		this.$get = ['$rootScope', '$q', '$parse', function($rootScope, $q, $parse) {
-			var prefix = this.prefix;
 			var notify = this.notify;
 			var watchers = {};
 
-			// If there is a prefix set in the config lets use that with an appended period for readability
-			if(prefix.substr(-1) !== '.') {
-				prefix = !!prefix ? prefix + '.' : '';
+            var prefix = function() {
+                return driver() === 'localStorageWrapper' ? 'lfp.' : '';
+            }
+
+			var onError = function(data, args, fct, deferred) {
+				if(data === 'InvalidStateError' && driver() === 'asyncStorage') {
+					setDriver('localStorageWrapper').then(function() {
+						fct(args).then(function(item) {
+							deferred.resolve(item);
+						}, function(data) {
+							deferred.reject(data);
+						});
+					}, function() {
+						deferred.reject(data);
+					});
+				} else {
+					deferred.reject(data);
+				}
 			}
 
 			// Directly adds a value to storage
 			var setItem = function(key, value) {
-				var deferred = $q.defer();
-				localforage.setItem(prefix + key, value).then(function() {
+				var deferred = $q.defer(),
+					args = arguments;
+				localforage.setItem(prefix() + key, value).then(function success() {
 					if(notify.setItem) {
-						$rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: value, driver: localforage.driver});
+						$rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: value, driver: localforage.driver()});
 					}
 					deferred.resolve();
+				}, function error(data) {
+					onError(data, args, setItem, deferred);
 				});
 
 				return deferred.promise;
@@ -73,19 +98,22 @@
 
 			// Directly get a value from storage
 			var getItem = function(key) {
-				var deferred = $q.defer();
-				localforage.getItem(prefix + key).then(function(item) {
+				var deferred = $q.defer(),
+					args = arguments;
+				localforage.getItem(prefix() + key).then(function success(item) {
 					deferred.resolve(item);
+				}, function error(data) {
+					onError(data, args, getItem, deferred);
 				});
 				return deferred.promise;
 			};
 
 			// Remove an item from storage
 			var removeItem = function(key) {
-				var promise = localforage.removeItem(key);
+				var promise = localforage.removeItem(prefix() + key);
 				if(notify.setItem) {
 					return promise.then(function(value) {
-						$rootScope.$broadcast('LocalForageModule.removeItem', {key: key, driver: localforage.driver});
+						$rootScope.$broadcast('LocalForageModule.removeItem', {key: key, driver: localforage.driver()});
 					});
 				} else {
 					return promise;
@@ -93,10 +121,11 @@
 			};
 
 			// Remove all data for this app from storage (we could use localforage.clear(); but we don't want to remove things without the prefix
-			var clearAll = function() {
-				var deferred = $q.defer();
-				var promises = [];
-				getKeys().then(function(keys) {
+			var clear = function() {
+				var deferred = $q.defer(),
+					args = arguments,
+					promises = [];
+				getKeys().then(function success(keys) {
 					angular.forEach(keys, function(key) {
 						promises.push(removeItem(key));
 					});
@@ -104,36 +133,45 @@
 					$q.all(promises).then(function() {
 						deferred.resolve();
 					});
+				}, function error(data) {
+					onError(data, args, clearAll, deferred);
 				});
 				return deferred.promise;
-			};
+			}
 
 			// Return the key for item at position n
-			var getKeyAt = function(n) {
-				var deferred = $q.defer(); // using $q to avoid using $apply
-				localforage.key(n).then(function(key) {
+			var key = function(n) {
+				var deferred = $q.defer(),
+					args = arguments;
+				localforage.key(n).then(function success(key) {
 					deferred.resolve(key);
+				}, function error(data) {
+					onError(data, args, key, deferred);
 				});
 				return deferred.promise;
 			};
 
-			var getLength = function() {
-				var deferred = $q.defer(); // using $q to avoid using $apply
-				localforage.length().then(function(length) {
+			var length = function() {
+				var deferred = $q.defer(),
+					args = arguments; // using $q to avoid using $apply
+				localforage.length().then(function success(length) {
 					deferred.resolve(length);
+				}, function error(data) {
+					onError(data, args, length, deferred);
 				});
 				return deferred.promise;
 			}
 
 			// Return the list of keys stored for this application
 			var getKeys = function() {
-				var deferred = $q.defer();
-				getLength().then(function(length) {
+				var deferred = $q.defer(),
+					args = arguments;
+				length().then(function success(length) {
 					var promises = [],
 						keys = [];
 					for(var i = 0; i < length; i++) {
-						promises.push(getKeyAt(i).then(function(key) {
-							if(key.indexOf(prefix) === 0) {
+						promises.push(key(i).then(function(key) {
+							if(key.indexOf(prefix()) === 0) {
 								keys.push(key);
 							}
 						}));
@@ -142,6 +180,8 @@
 					$q.all(promises).then(function() {
 						deferred.resolve(keys);
 					});
+				}, function error(data) {
+					onError(data, args, getKeys, deferred);
 				});
 				return deferred.promise;
 			}
@@ -216,14 +256,21 @@
 
 			return {
 				setDriver: setDriver,
-				getDriver: getDriver,
-				set: setItem,
-				get: getItem,
+                driver: driver,
+				getDriver: driver, // deprecated
+				setItem: setItem,
+                set: setItem, // deprecated
+                getItem: getItem,
+                get: getItem, // deprecated
 				remove: removeItem,
-				clearAll: clearAll,
-				getKeyAt: getKeyAt,
+                removeItem: removeItem, // deprecated
+				clear: clear,
+				clearAll: clear, // deprecated
+                key: key,
+				getKeyAt: key, // deprecated
 				getKeys: getKeys,
-				getLength: getLength,
+				length: length,
+				getLength: length, // deprecated
 				bind: bind,
 				unbind: unbind
 			};

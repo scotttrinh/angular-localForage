@@ -1,0 +1,38 @@
+{
+  "name": "angular-localForage",
+  "version": "0.1.0",
+  "description": "Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)",
+  "main": "angular-localForage.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ocombe/angular-localForage.git"
+  },
+  "keywords": [
+    "localstorage",
+    "local-storage",
+    "localForage",
+    "indexDB",
+    "webSQL",
+    "storage",
+    "module",
+    "angular",
+    "angularJS"
+  ],
+  "author": "Olivier Combe <olivier.combe@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/ocombe/angular-localForage/issues"
+  },
+  "homepage": "https://github.com/ocombe/angular-localForage",
+  "devDependencies": {
+    "karma": "~0.12.1",
+    "karma-chrome-launcher": "~0.1.2",
+    "karma-firefox-launcher": "~0.1.3",
+    "karma-jasmine": "~0.1.5"
+  }
+}

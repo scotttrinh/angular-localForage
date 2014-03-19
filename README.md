@@ -28,7 +28,13 @@ angular.module('yourModule', ['LocalForageModule']);
 ```js
 angular.module('yourModule', ['LocalForageModule'])
 .config(['$localForageProvider', function($localForageProvider){
-    $localForageProvider.setPrefix('newPrefix');
+    $localForageProvider.config({
+        driver      : 'localStorageWrapper', // if you want to force a driver
+        name        : 'myApp', // name of the database and prefix for your data
+        version     : 1.0, // version of the database, you shouldn't have to use this
+        storeName   : 'keyvaluepairs', // name of the table
+        description : 'some description'
+    });
 }]);
 ```
 - Use the ```$localForage``` service or the ```local-forage``` directive
@@ -37,7 +43,7 @@ angular.module('yourModule', ['LocalForageModule'])
 .controller('yourCtrl', ['$scope', '$localForage', function($scope, $localForage) {
     // Start fresh
     $localForage.clearAll();
-    $localForage.set('myName','Olivier Combe').then(function() {
+    $localForage.setItem('myName','Olivier Combe').then(function() {
         $localForage.get('myName').then(function(data) {
             var myName = data;
         });
@@ -55,21 +61,21 @@ angular.module('yourModule', ['LocalForageModule'])
 ## Functions :
 - ```setDriver(driver)```: you can force the driver to use, check the [localForage documentation](https://github.com/mozilla/localForage#driver-selection-ie-forcing-localstorage) for more information
 
-- ```getDriver()```: returns the current localForage driver (sync)
+- ```driver()```: returns the current localForage driver (sync)
 
-- ```set(key, value)```: stores data (async, promise)
+- ```setItem(key, value)```: stores data (async, promise)
 
-- ```get(key)```: retrieves stored data (async, promise)
+- ```getItem(key)```: retrieves stored data (async, promise)
 
-- ```remove(key)```: removes stored data (async, promise)
+- ```removeItem(key)```: removes stored data (async, promise)
 
-- ```clearAll()```: removed all stored data for your application based on the app prefix (lf by default) (async, promise)
+- ```clear()```: removed all stored data for your application based on the app prefix (async, promise)
 
-- ```getKeyAt(n)```: retrieves the key at n position in storage. Used internally for clearAll and getKeys functions. It doesn't take prefix into account (async, promise)
+- ```key(n)```: retrieves the key at n position in storage. Used internally for clearAll and getKeys functions. It doesn't take prefix into account (async, promise)
 
-- ```getKeys(driver)```: returns all the keys used for storage in your application based on the app prefix (lf by default) (async, promise)
+- ```getKeys(driver)```: returns all the keys used for storage in your application. Be careful with it if you use localstorage because it will return all the keys (not just the ones with your prefix) (async, promise)
 
-- ```getLength(driver)```: returns the number of items stored. Used internally for clearAll and getKeys functions. It doesn't take prefix into account (async, promise)
+- ```length(driver)```: returns the number of items stored. Used internally for clearAll and getKeys functions. Be careful with it if you use localstorage because it will return all the keys (not just the ones with your prefix) (async, promise)
 
 - ```bind($scope, key/params object)```: lets you directly bind a LocalForage value to a $scope variable
 ```js
@@ -106,7 +112,9 @@ You can configure the ```$localForageProvider``` to set your own prefix for stor
 ```js
 angular.module('yourModule', ['LocalForageModule'])
 .config(['$localForageProvider', function($localForageProvider){
-    $localForageProvider.setPrefix('newPrefix');
+    $localForageProvider.config({
+        name: 'yourprefix'
+    });
 }]);
 ```
 
@@ -132,19 +140,19 @@ angular.module('yourModule', ['LocalForageModule'])
     $localForageProvider.setDriver('localStorageWrapper');
 }]);
 ```
-## Unit tests
 
-To retrieve all things needed, first run
+## Unit tests
+Download the required libs :
 
 ```
 bower install
 npm install
 ```
 
-After, you just have to run :
+Then start the tests with :
 
 ```
-karma start
+npm test
 ```
 
-It will launch once Chrome and Firefox, edit karma.conf.js if you want to change something.
+It will launch Chrome and Firefox, edit karma.conf.js if you want to change something.
