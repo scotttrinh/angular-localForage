@@ -9,7 +9,7 @@
   "description": "Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)",
   "keywords": [
     "localstorage",
-    "local-storage",,
+    "local-storage",
     "localForage",
     "indexDB",
     "webSQL",
