@@ -168,11 +168,12 @@
 					args = arguments;
 				length().then(function success(length) {
 					var promises = [],
-						keys = [];
+						keys = [],
+                        p = prefix();
 					for(var i = 0; i < length; i++) {
 						promises.push(key(i).then(function(key) {
-							if(key.indexOf(prefix()) === 0) {
-								keys.push(key);
+							if(key.indexOf(p) === 0) {
+								keys.push(key.substr(p.length, key.length));
 							}
 						}));
 					}
