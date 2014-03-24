@@ -1,3 +1,6 @@
+# 0.1.1 (24 Mars 2014)
+* Updated bower localstorage version to 0.2.0
+
 # 0.1.0 (19 Mars 2014)
 * Added a changelog !
 * Using localForage 0.1.1 with the new config options
