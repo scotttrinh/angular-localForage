@@ -1,6 +1,6 @@
 {
   "name": "angular-localForage",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)",
   "main": "angular-localForage.js",
   "directories": {

@@ -1,3 +1,6 @@
+# 0.1.2 (02 April 2014)
+* Bump to localForage 0.3.0
+
 # 0.1.1 (24 Mars 2014)
 * Updated bower localstorage version to 0.2.0
 
