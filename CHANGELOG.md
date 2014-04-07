@@ -1,3 +1,6 @@
+# 0.1.3 (07 April 2014)
+* Bump to localForage 0.3.1
+
 # 0.1.2 (02 April 2014)
 * Bump to localForage 0.3.0
 
