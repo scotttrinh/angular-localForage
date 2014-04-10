@@ -1,3 +1,6 @@
+# 0.1.4 (10 April 2014)
+* Fix bug with prefixing for localstorage
+
 # 0.1.3 (07 April 2014)
 * Bump to localForage 0.3.1
 

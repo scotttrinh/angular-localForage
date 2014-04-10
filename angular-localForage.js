@@ -61,7 +61,7 @@
 			var watchers = {};
 
             var prefix = function() {
-                return driver() === 'localStorageWrapper' ? 'lfp.' : '';
+                return driver() === 'localStorageWrapper' ? window.localForageConfig.name + '.' : '';
             }
 
 			var onError = function(data, args, fct, deferred) {
