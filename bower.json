@@ -1,7 +1,7 @@
 {
   "name": "angular-localForage",
   "main": "angular-localForage.js",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "homepage": "https://github.com/ocombe/angular-localForage",
   "authors": [
     "Olivier Combe <olivier.combe@gmail.com>"
@@ -27,10 +27,10 @@
     "tests"
   ],
   "devDependencies": {
-    "angular": "~1.2.13",
-    "angular-mocks": "~1.2.13"
+    "angular-mocks": "~1.2.16"
   },
   "dependencies": {
-    "localforage": "0.3.1"
+    "localforage": "~0.7.0",
+    "angular": "*"
   }
 }

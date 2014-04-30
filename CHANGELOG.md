@@ -1,3 +1,10 @@
+# 0.2.0 (30 April 2014)
+* setPrefix has been removed from code
+* setItem now returns the value set in the promise resolve
+* **Breaking change**: due to changes in localForage, you now need to configure localforage before any call has been made to it (in your module config for example), you can't configure it after init
+* Added an example app
+* Moved angular-localForage files to dist folder and the files have been renamed in lowercase to keep consistency with localforage
+
 # 0.1.4 (10 April 2014)
 * Fix bug with prefixing for localstorage (bug #10)
 

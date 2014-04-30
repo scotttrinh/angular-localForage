@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+    <head>
+        <meta charset="utf-8">
+        <title>localForage example</title>
+    </head>
+    <body ng-controller="MyCtrl">
+        <input ng-model="myText">
+        <button ng-click="store(myText)">Save</button>
+
+        <div class="ng-cloak">Stored value: {{ myTextStored }}</div>
+
+        <script src="../bower_components/angular/angular.js"></script>
+        <script src="../bower_components/localforage/dist/localforage.js"></script>
+        <script src="../dist/angular-localforage.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/controllers.js"></script>
+    </body>
+</html>

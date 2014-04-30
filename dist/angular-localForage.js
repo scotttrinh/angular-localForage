@@ -2,27 +2,19 @@
  * copyright: Olivier Combe (https://github.com/ocombe/angular-localForage)
  */
 
-(function(window, angular, undefined) {
+(function(window, angular, localforage, undefined) {
 	'use strict';
 
 	var angularLocalForage = angular.module('LocalForageModule', ['ng']);
 	angularLocalForage.provider('$localForage', function() {
-        window.localForageConfig = {
-            name: 'lf' // default prefix
-        };
+		localforage.config({
+			name: 'lf' // default prefix
+		});
 
 		// Send signals for each of the following actions ?
 		this.notify = {
 			setItem: false,
 			removeItem: false
-		};
-
-		// Setter for the prefix
-		this.setPrefix = function(prefix) {
-            if(angular.isDefined(prefix) && prefix !== window.localForageConfig.name) {
-                window.localForageConfig.name = prefix;
-                localforage._initStorage(window.localForageConfig);
-            }
 		};
 
 		// Setter for the storage driver
@@ -47,11 +39,11 @@
 
         this.config = function(config) {
             if(angular.isObject(config)) {
-                window.localForageConfig = config;
                 if(angular.isDefined(config.driver)) {
+	                localforage.config(config);
                     return setDriver(config.driver);
                 } else {
-                    return localforage._initStorage(config);
+                    return localforage.config(config);
                 }
             }
         }
@@ -61,7 +53,7 @@
 			var watchers = {};
 
             var prefix = function() {
-                return driver() === 'localStorageWrapper' ? window.localForageConfig.name + '.' : '';
+                return driver() === 'localStorageWrapper' ? localforage.config().name + '.' : '';
             }
 
 			var onError = function(data, args, fct, deferred) {
@@ -88,7 +80,7 @@
 					if(notify.setItem) {
 						$rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: value, driver: localforage.driver()});
 					}
-					deferred.resolve();
+					deferred.resolve(value);
 				}, function error(data) {
 					onError(data, args, setItem, deferred);
 				});
@@ -291,4 +283,4 @@
 			}
 		}
 	}]);
-})(window, window.angular);
+})(window, window.angular, window.localforage);

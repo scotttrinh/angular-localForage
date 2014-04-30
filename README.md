@@ -133,7 +133,6 @@ $rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: value, d
 $rootScope.$broadcast('LocalForageModule.removeItem', {key: key, driver: localforage.driver});
 ```
 
-
 And finally you can set the driver.
 ```js
 angular.module('yourModule', ['LocalForageModule'])
@@ -146,7 +145,6 @@ angular.module('yourModule', ['LocalForageModule'])
 Download the required libs :
 
 ```
-bower install
 npm install
 ```
 
