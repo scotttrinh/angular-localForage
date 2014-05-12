@@ -1,3 +1,6 @@
+# 0.2.1 (12 May 2014)
+* Update bower.json to fix bug #12
+
 # 0.2.0 (30 April 2014)
 * setPrefix has been removed from code
 * setItem now returns the value set in the promise resolve
