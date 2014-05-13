@@ -1,3 +1,6 @@
+# 0.2.2 (13 May 2014)
+* Update localforage to 0.8.1
+
 # 0.2.1 (12 May 2014)
 * Update bower.json to fix bug #12
 
