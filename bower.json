@@ -23,8 +23,8 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
     "tests",
+	"karma.conf.js",
     "gulpfile.js",
     "package.json",
     "angular-localForage.js"
