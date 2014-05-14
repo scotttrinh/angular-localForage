@@ -1,3 +1,18 @@
+# OS generated files #
+######################
+.DS_Store
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Node Files #
+##############
 node_modules
+npm-debug.log
+
+# Project Files #
+#################
+.tmp
+.sass-cache
 bower_components
-.idea
+.idea/*

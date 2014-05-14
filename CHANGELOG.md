@@ -1,3 +1,7 @@
+# 0.2.3 (14 May 2014)
+* Added gulpfile.js to test & build the dist files
+* Fix bug #14 (broadcast removeItem: notify.setItem instead of notify.removeItem)
+
 # 0.2.2 (13 May 2014)
 * Update localforage to 0.8.1
 
