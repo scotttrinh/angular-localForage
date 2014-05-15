@@ -10,7 +10,7 @@ module.exports = function (config) {
             'bower_components/angular/angular.js',
             'bower_components/angular-mocks/angular-mocks.js',
             'bower_components/localforage/dist/localforage.min.js',
-            'dist/angular-localforage.js',
+            'src/angular-localforage.js',
             'tests/angular-localForage.js'
         ],
         colors    : true,

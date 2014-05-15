@@ -6,7 +6,7 @@ gulp.task('karma', function() {
 		'bower_components/angular/angular.js',
 		'bower_components/angular-mocks/angular-mocks.js',
 		'bower_components/localforage/dist/localforage.min.js',
-		'angular-localforage.js',
+		'src/angular-localforage.js',
 		'tests/angular-localForage.js'
 	];
 	return gulp.src(testFiles)
@@ -34,7 +34,7 @@ gulp.task('build', ['karma'], function() {
 	              ' */',
 	              ''].join('\n');
 
-	return gulp.src('angular-localForage.js')
+	return gulp.src('src/angular-localForage.js')
 		.pipe(header(banner, { pkg : pkg } ))
 		.pipe(gulp.dest('dist'))
 		.pipe(uglify())
