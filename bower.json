@@ -27,7 +27,7 @@
 	"karma.conf.js",
     "gulpfile.js",
     "package.json",
-    "src/angular-localForage.js"
+    "src"
   ],
   "devDependencies": {
     "angular-mocks": "~1.2.16"
