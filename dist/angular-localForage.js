@@ -79,6 +79,12 @@
 			var setItem = function(key, value) {
 				var deferred = $q.defer(),
 					args = arguments;
+
+				//avoid $promises attributes from value objects, if is there.
+				if (angular.isObject(value) && angular.isDefined(value.$promise)) {
+					delete value.$promise; //delete attribut from object structure.
+				}
+
 				localforage.setItem(prefix() + key, value).then(function success() {
 					if(notify.setItem) {
 						$rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: value, driver: localforage.driver()});
