@@ -93,9 +93,9 @@ describe('Module: LocalForageModule', function () {
         var $injector = angular.injector(['LocalForageModule']);
     });
 
-    iit('should set and get', function () {
+    it('should set and get', function () {
 
-        var result;
+        var result = undefined;
 
         myService.clearAll();
         myService.setItem('myName', 'Olivier Combe').then(function () {
