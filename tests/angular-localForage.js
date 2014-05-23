@@ -92,4 +92,21 @@ describe('Module: LocalForageModule', function () {
     it('directive should be defined', function () {
         var $injector = angular.injector(['LocalForageModule']);
     });
+
+    iit('should set and get', function () {
+
+        var result;
+
+        myService.clearAll();
+        myService.setItem('myName', 'Olivier Combe').then(function () {
+            console.log('le set !');
+            myService.getItem('myName').then(function (data) {
+                console.log('le get !', data);
+                result = data;
+            });
+        });
+
+        expect(result).toEqual('Olivier Combe');
+    });
+
 });

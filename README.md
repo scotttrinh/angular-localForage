@@ -142,6 +142,8 @@ angular.module('yourModule', ['LocalForageModule'])
 ```
 
 ## Unit tests
+Install karma command line with `npm install -g karma-cli`.
+
 Download the required libs :
 
 ```
