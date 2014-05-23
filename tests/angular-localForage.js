@@ -92,4 +92,38 @@ describe('Module: LocalForageModule', function () {
     it('directive should be defined', function () {
         var $injector = angular.injector(['LocalForageModule']);
     });
+
+    it('should setItem and getItem', function() {
+        function run(driver) {
+            myService.setDriver(driver);
+
+            var result;
+
+            myService.clearAll();
+            myService.setItem('myName', 'Olivier Combe').then(function() {
+                myService.getItem('myName').then(function(data) {
+                    result = data;
+                }, function() {
+                    result = false;
+                });
+            }, function() {
+                result = false;
+            });
+
+            waitsFor(function() {
+                return result !== undefined;
+            });
+
+            runs(function() {
+                expect(result).toEqual('Olivier Combe');
+            });
+        }
+
+        run('asyncStorage');
+        run('localStorageWrapper');
+        if (window.openDatabase) {
+            run('webSQLStorage');
+        }
+    });
+
 });
