@@ -94,21 +94,30 @@ describe('Module: LocalForageModule', function () {
     });
 
     it('should set and get', function () {
-        console.log('plop'); // This is called
-        myService.clearAll();
-        myService.setItem('myName', 'Olivier Combe').then(function () {
-            console.log('le set !'); // This is never called
-            myService.getItem('myName').then(function (data) {
-                console.log('le get !', data); // This is never called
-                expect(data).toEqual('Olivier Combe');
-            }, function() {
-                console.log('getItem fail');
-                expect(true).toBeFalsy();
-            });
-        }, function() {
-            console.log('setItem fail');
-            expect(true).toBeFalsy();
-        });
+        var result;
+
+	    myService.clearAll();
+	    myService.setItem('myName', 'Olivier Combe').then(function() {
+		    console.log('le set !');
+		    myService.getItem('myName').then(function(data) {
+			    console.log('le get !', data);
+			    result = data;
+		    }, function() {
+			    console.log('fail');
+			    result = false;
+		    });
+	    }, function() {
+		    console.log('fail');
+		    result = false;
+	    });
+
+	    waitsFor(function() {
+		    return result !== undefined;
+	    });
+
+	    runs(function() {
+		    expect(result).toEqual('Olivier Combe');
+	    });
     });
 
 });
