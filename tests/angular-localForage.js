@@ -94,19 +94,14 @@ describe('Module: LocalForageModule', function () {
     });
 
     it('should set and get', function () {
-
-        var result = undefined;
-
         myService.clearAll();
         myService.setItem('myName', 'Olivier Combe').then(function () {
             console.log('le set !');
             myService.getItem('myName').then(function (data) {
                 console.log('le get !', data);
-                result = data;
+                expect(data).toEqual('Olivier Combe');
             });
         });
-
-        expect(result).toEqual('Olivier Combe');
     });
 
 });
