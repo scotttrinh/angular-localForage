@@ -1,3 +1,29 @@
+<a name="0.2.4"></a>
+# 0.2.4 (2014-05-26)
+
+
+## Bug Fixes
+
+- error on ipad (safari/chrome) where key could be null and throw an error
+ ([0011d110](https://github.com/ocombe/angular-localForage/commit/0011d1100331f691a7ddd3b694895e3f7c188bbc))
+- remove $promise attributes from objects before we store them on localforage.
+ ([6f6f11ab](https://github.com/ocombe/angular-localForage/commit/6f6f11ab224d894c1a4e477b2d87131612a5f074))
+
+
+## Features
+
+- Added a validation for commits & a task to auto generate the changelog
+ ([f9658263](https://github.com/ocombe/angular-localForage/commit/f96582636824bd583f68e7b3a2d9ea645d83e6e3))
+- new tests for getItem/setItem functions
+ ([61efd115](https://github.com/ocombe/angular-localForage/commit/61efd1153fa7c8f0d37ab493f29480ce5317ece4))
+
+
+## Documentation
+
+- instructions for contributing
+ ([2a84fc4c](https://github.com/ocombe/angular-localForage/commit/2a84fc4cbdb15a2ae6e1c47dfd229b0ea7f29a48))
+
+
 # 0.2.3 (14 May 2014)
 * Added gulpfile.js to test & build the dist files
 * Fix bug #14 (broadcast removeItem: notify.setItem instead of notify.removeItem)

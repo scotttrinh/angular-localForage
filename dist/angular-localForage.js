@@ -1,6 +1,6 @@
 /**
  * angular-localForage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v0.2.3
+ * @version v0.2.4
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
  * @author Olivier Combe <olivier.combe@gmail.com>
@@ -79,12 +79,6 @@
 			var setItem = function(key, value) {
 				var deferred = $q.defer(),
 					args = arguments;
-
-				//avoid $promises attributes from value objects, if is there.
-				if (angular.isObject(value) && angular.isDefined(value.$promise)) {
-					delete value.$promise; //delete attribut from object structure.
-				}
-
 				localforage.setItem(prefix() + key, value).then(function success() {
 					if(notify.setItem) {
 						$rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: value, driver: localforage.driver()});
@@ -173,7 +167,7 @@
                         p = prefix();
 					for(var i = 0; i < length; i++) {
 						promises.push(key(i).then(function(key) {
-							if(key.indexOf(p) === 0) {
+							if(!!key && key.indexOf(p) === 0) {
 								keys.push(key.substr(p.length, key.length));
 							}
 						}));
