@@ -160,7 +160,7 @@
                         p = prefix();
 					for(var i = 0; i < length; i++) {
 						promises.push(key(i).then(function(key) {
-							if(key.indexOf(p) === 0) {
+							if(!!key && key.indexOf(p) === 0) {
 								keys.push(key.substr(p.length, key.length));
 							}
 						}));
