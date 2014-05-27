@@ -1,3 +1,13 @@
+<a name="0.2.5"></a>
+# 0.2.5 (2014-05-27)
+
+
+## Bug Fixes
+
+- readded changes that disappeared in the build for  #16 (avoiding attributes from objects before store it on localforage)
+ ([c1175e0c](https://github.com/ocombe/angular-localForage/commit/c1175e0c7a5fc77dbf3a38a0fe5eec1f2f17b45e))
+
+
 <a name="0.2.4"></a>
 # 0.2.4 (2014-05-26)
 
