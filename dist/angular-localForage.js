@@ -236,6 +236,7 @@
 							setItem(storeName, val);
 						}
 					}, true);
+					return item;
 				});
 			}
 
