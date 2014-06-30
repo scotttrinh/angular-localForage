@@ -1,3 +1,14 @@
+<a name="0.2.6"></a>
+# 0.2.6 (2014-06-30)
+
+
+## Bug Fixes
+
+- bind should resolve with the item value
+ ([b3895d14](https://github.com/ocombe/angular-localForage/commit/b3895d146b98a0b82409a9bd859beae343ca6831),
+ [#19](https://github.com/ocombe/angular-localForage/issues/19))
+
+
 <a name="0.2.5"></a>
 # 0.2.5 (2014-05-27)
 
