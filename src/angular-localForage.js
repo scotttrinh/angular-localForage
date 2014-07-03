@@ -37,26 +37,6 @@
 			if(!angular.isObject(config)) {
 				config = {};
 			}
-			var is_firefox = /firefox/i.test(navigator.userAgent);
-			if(is_firefox) {
-				try {
-					var indexedDB = indexedDB || this.indexedDB || this.webkitIndexedDB ||
-						this.mozIndexedDB || this.OIndexedDB ||
-						this.msIndexedDB;
-
-					var test = indexedDB.open('_localforage_spec_test', 1);
-					test.onerror = function() {
-						supportsIndexedDB = false;
-					}
-
-					var supportsIndexedDB = indexedDB && test.onupgradeneeded === null;
-				} catch(e) {
-					supportsIndexedDB = false;
-				}
-				if(!supportsIndexedDB) {
-					config.driver = 'localStorageWrapper';
-				}
-			}
 			if(angular.isDefined(config.driver)) {
 				localforage.config(config);
 				return setDriver(config.driver);
@@ -74,9 +54,9 @@
             }
 
 			var onError = function(data, args, fct, deferred) {
-				if(data === 'InvalidStateError' && driver() === 'asyncStorage') {
+				if((angular.isObject(data) && data.name ? data.name === 'InvalidStateError' : (angular.isString(data) && data === 'InvalidStateError')) && driver() === 'asyncStorage') {
 					setDriver('localStorageWrapper').then(function() {
-						fct(args).then(function(item) {
+						fct.apply(this, args).then(function(item) {
 							deferred.resolve(item);
 						}, function(data) {
 							deferred.reject(data);
