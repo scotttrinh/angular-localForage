@@ -1,3 +1,13 @@
+<a name="0.2.7"></a>
+# 0.2.7 (2014-07-03)
+
+
+## Bug Fixes
+
+- invalidStateError in firefox private browsing
+ ([04f55e6f](https://github.com/ocombe/angular-localForage/commit/04f55e6f71e543a7ae123a77f42cb396c2ba7d29))
+
+
 <a name="0.2.6"></a>
 # 0.2.6 (2014-06-30)
 
