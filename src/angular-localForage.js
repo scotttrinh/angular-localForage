@@ -53,8 +53,10 @@
                 return driver() === 'localStorageWrapper' ? localforage.config().name + '.' : '';
             }
 
-			var onError = function(data, args, fct, deferred) {
-				if((angular.isObject(data) && data.name ? data.name === 'InvalidStateError' : (angular.isString(data) && data === 'InvalidStateError')) && driver() === 'asyncStorage') {
+			var onError = function(err, args, fct, deferred) {
+				// test for private browsing errors in Firefox & Safari
+				if(((angular.isObject(err) && err.name ? err.name === 'InvalidStateError' : (angular.isString(err) && err === 'InvalidStateError')) && driver() === 'asyncStorage')
+					|| (angular.isObject(err) && err.code && err.code === 5)) {
 					setDriver('localStorageWrapper').then(function() {
 						fct.apply(this, args).then(function(item) {
 							deferred.resolve(item);
@@ -62,10 +64,10 @@
 							deferred.reject(data);
 						});
 					}, function() {
-						deferred.reject(data);
+						deferred.reject(err);
 					});
 				} else {
-					deferred.reject(data);
+					deferred.reject(err);
 				}
 			}
 
