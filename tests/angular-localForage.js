@@ -26,29 +26,35 @@ describe('Module: LocalForageModule', function () {
 
     it('service:setDriver should be defined', function () {
         expect(myService.setDriver).toBeDefined();
+	    expect(typeof myService.setDriver).toBe('function');
     });
 
-    it('service:getDriver should be defined', function () {
+    it('service:driver should be defined', function () {
         expect(myService.driver).toBeDefined();
+	    expect(typeof myService.driver).toBe('function');
     });
 
     it('service:set should be defined', function () {
         expect(myService.setItem).toBeDefined();
+	    expect(typeof myService.set).toBe('function');
     });
 
     it('service:get should be defined', function () {
         expect(myService.getItem).toBeDefined();
+	    expect(typeof myService.getItem).toBe('function');
     });
 
     it('service:remove should be defined', function () {
-        expect(myService.removeItem).toBeDefined();
+        expect(myService.remove).toBeDefined();
+	    expect(typeof myService.remove).toBe('function');
     });
 
-    it('service:clearAll should be defined', function () {
+    it('service:clear should be defined', function () {
         expect(myService.clear).toBeDefined();
+	    expect(typeof myService.clear).toBe('function');
     });
 
-    it('service:clearAll should works', function () {
+    it('service:clear should works', function () {
         var promise_expected = myService.clear();
 //        rootScope.$digest();
 //        expect(spies.getKeys).toHaveBeenCalled();
@@ -61,45 +67,41 @@ describe('Module: LocalForageModule', function () {
 //        expect(promise_expected.then).not.toBe(null);
     });
 
-    it('service:getKeyAt should be defined', function () {
-
+    it('service:key should be defined', function () {
         expect(myService.key).toBeDefined();
+	    expect(typeof myService.key).toBe('function');
     });
 
-    it('service:getKeys should be defined', function () {
-        expect(myService.getKeys).toBeDefined();
+    it('service:keys should be defined', function () {
+        expect(myService.keys).toBeDefined();
+	    expect(typeof myService.keys).toBe('function');
     });
 
-    it('service:getLength should be defined', function () {
+    it('service:length should be defined', function () {
         expect(myService.length).toBeDefined();
-        expect(typeof myService.getLength).toBe('function');
-    });
-
-    it('service:getLength should works', function () {
-        var length_expected = myService.getLength();
-
-        expect(typeof myService.length).toBeDefined();
+        expect(typeof myService.length).toBe('function');
     });
 
     it('service:bind should be defined', function () {
         expect(myService.bind).toBeDefined();
+	    expect(typeof myService.bind).toBe('function');
     });
 
     it('service:unbind should be defined', function () {
         expect(myService.unbind).toBeDefined();
+	    expect(typeof myService.unbind).toBe('function');
     });
 
     it('directive should be defined', function () {
         var $injector = angular.injector(['LocalForageModule']);
+	    // todo
     });
 
-    it('should setItem and getItem', function() {
+    it('service:setItem and getItem should work', function() {
+	    var result = null;
         function run(driver) {
             myService.setDriver(driver);
-
-            var result;
-
-            myService.clearAll();
+            myService.clear();
             myService.setItem('myName', 'Olivier Combe').then(function() {
                 myService.getItem('myName').then(function(data) {
                     result = data;
@@ -111,7 +113,7 @@ describe('Module: LocalForageModule', function () {
             });
 
             waitsFor(function() {
-                return result !== undefined;
+                return result !== null;
             });
 
             runs(function() {
