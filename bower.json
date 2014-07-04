@@ -9,10 +9,13 @@
   "license": "MIT",
   "ignore": ["**/.*", "node_modules", "bower_components", "tests", "karma.conf.js", "gulpfile.js", "package.json", "src", "validate-commit-msg.js", "changelog.js"],
   "devDependencies": {
-    "angular-mocks": "~1.2.16"
+    "angular-mocks": "1.2.16"
   },
   "dependencies": {
-    "localforage": "~0.8.1",
-    "angular": "*"
+    "localforage": "0.9.1",
+    "angular": "1.2.19"
+  },
+  "resolutions": {
+    "angular": "1.2.19"
   }
 }

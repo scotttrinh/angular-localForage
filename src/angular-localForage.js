@@ -120,7 +120,7 @@
 				var deferred = $q.defer(),
 					args = arguments,
 					promises = [];
-				getKeys().then(function success(keys) {
+				keys().then(function success(keys) {
 					angular.forEach(keys, function(key) {
 						promises.push(removeItem(key));
 					});
@@ -158,26 +158,21 @@
 			}
 
 			// Return the list of keys stored for this application
-			var getKeys = function() {
+			var keys = function() {
 				var deferred = $q.defer(),
 					args = arguments;
-				length().then(function success(length) {
-					var promises = [],
-						keys = [],
-                        p = prefix();
-					for(var i = 0; i < length; i++) {
-						promises.push(key(i).then(function(key) {
-							if(!!key && key.indexOf(p) === 0) {
-								keys.push(key.substr(p.length, key.length));
-							}
-						}));
+				localforage.keys().then(function success(keyList) {
+					// because we may have a prefix, extract only related keys
+					var p = prefix(),
+						fixedKeyList = [];
+					for(var i = 0, len = keyList.length; i < len; i++) {
+						if(!!keyList[i] && keyList[i].indexOf(p) === 0) {
+							fixedKeyList.push(keyList[i].substr(p.length, keyList[i].length));
+						}
 					}
-
-					$q.all(promises).then(function() {
-						deferred.resolve(keys);
-					});
+					deferred.resolve(fixedKeyList);
 				}, function error(data) {
-					onError(data, args, getKeys, deferred);
+					onError(data, args, keys, deferred);
 				});
 				return deferred.promise;
 			}
@@ -265,7 +260,8 @@
 				clearAll: clear, // deprecated
                 key: key,
 				getKeyAt: key, // deprecated
-				getKeys: getKeys,
+				keys: keys,
+				getKeys: keys, // deprecated
 				length: length,
 				getLength: length, // deprecated
 				bind: bind,

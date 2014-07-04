@@ -14,4 +14,8 @@ app.controller('MyCtrl', ['$scope', '$localForage', function($scope, $localForag
 	$localForage.getItem('myTextStored').then(function(data) {
 		$scope.myTextStored = data;
 	});
+
+	$localForage.keys().then(function(data) {
+		console.log('list of keys', data);
+	})
 }]);
