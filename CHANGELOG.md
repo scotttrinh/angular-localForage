@@ -1,3 +1,21 @@
+<a name="0.2.8"></a>
+# 0.2.8 (2014-07-04)
+
+
+## Bug Fixes
+
+- Safari private browsing would not resolve
+ ([224fca6d](https://github.com/ocombe/angular-localForage/commit/224fca6d99967bce37b0cc05f8737f545ca33d1b))
+- better fix for the Firefox private browsing invalidStateError
+ ([c566a19b](https://github.com/ocombe/angular-localForage/commit/c566a19ba4223834869902df9ea3ea0f980f3965))
+
+
+## Features
+
+- bump to localForage 0.9.1 and use of the new `keys` function
+ ([4f9431a6](https://github.com/ocombe/angular-localForage/commit/4f9431a6af62f1328ea5aa05cb0f7acafe8a4254))
+
+
 <a name="0.2.7"></a>
 # 0.2.7 (2014-07-03)
 

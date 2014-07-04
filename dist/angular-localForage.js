@@ -1,6 +1,6 @@
 /**
  * angular-localForage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v0.2.7
+ * @version v0.2.8
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
  * @author Olivier Combe <olivier.combe@gmail.com>
@@ -44,26 +44,6 @@
 			if(!angular.isObject(config)) {
 				config = {};
 			}
-			var is_firefox = /firefox/i.test(navigator.userAgent);
-			if(is_firefox) {
-				try {
-					var indexedDB = indexedDB || this.indexedDB || this.webkitIndexedDB ||
-						this.mozIndexedDB || this.OIndexedDB ||
-						this.msIndexedDB;
-
-					var test = indexedDB.open('_localforage_spec_test', 1);
-					test.onerror = function() {
-						supportsIndexedDB = false;
-					}
-
-					var supportsIndexedDB = indexedDB && test.onupgradeneeded === null;
-				} catch(e) {
-					supportsIndexedDB = false;
-				}
-				if(!supportsIndexedDB) {
-					config.driver = 'localStorageWrapper';
-				}
-			}
 			if(angular.isDefined(config.driver)) {
 				localforage.config(config);
 				return setDriver(config.driver);
@@ -80,19 +60,21 @@
                 return driver() === 'localStorageWrapper' ? localforage.config().name + '.' : '';
             }
 
-			var onError = function(data, args, fct, deferred) {
-				if(data === 'InvalidStateError' && driver() === 'asyncStorage') {
+			var onError = function(err, args, fct, deferred) {
+				// test for private browsing errors in Firefox & Safari
+				if(((angular.isObject(err) && err.name ? err.name === 'InvalidStateError' : (angular.isString(err) && err === 'InvalidStateError')) && driver() === 'asyncStorage')
+					|| (angular.isObject(err) && err.code && err.code === 5)) {
 					setDriver('localStorageWrapper').then(function() {
-						fct(args).then(function(item) {
+						fct.apply(this, args).then(function(item) {
 							deferred.resolve(item);
 						}, function(data) {
 							deferred.reject(data);
 						});
 					}, function() {
-						deferred.reject(data);
+						deferred.reject(err);
 					});
 				} else {
-					deferred.reject(data);
+					deferred.reject(err);
 				}
 			}
 
@@ -147,7 +129,7 @@
 				var deferred = $q.defer(),
 					args = arguments,
 					promises = [];
-				getKeys().then(function success(keys) {
+				keys().then(function success(keys) {
 					angular.forEach(keys, function(key) {
 						promises.push(removeItem(key));
 					});
@@ -185,26 +167,21 @@
 			}
 
 			// Return the list of keys stored for this application
-			var getKeys = function() {
+			var keys = function() {
 				var deferred = $q.defer(),
 					args = arguments;
-				length().then(function success(length) {
-					var promises = [],
-						keys = [],
-                        p = prefix();
-					for(var i = 0; i < length; i++) {
-						promises.push(key(i).then(function(key) {
-							if(!!key && key.indexOf(p) === 0) {
-								keys.push(key.substr(p.length, key.length));
-							}
-						}));
+				localforage.keys().then(function success(keyList) {
+					// because we may have a prefix, extract only related keys
+					var p = prefix(),
+						fixedKeyList = [];
+					for(var i = 0, len = keyList.length; i < len; i++) {
+						if(!!keyList[i] && keyList[i].indexOf(p) === 0) {
+							fixedKeyList.push(keyList[i].substr(p.length, keyList[i].length));
+						}
 					}
-
-					$q.all(promises).then(function() {
-						deferred.resolve(keys);
-					});
+					deferred.resolve(fixedKeyList);
 				}, function error(data) {
-					onError(data, args, getKeys, deferred);
+					onError(data, args, keys, deferred);
 				});
 				return deferred.promise;
 			}
@@ -292,7 +269,8 @@
 				clearAll: clear, // deprecated
                 key: key,
 				getKeyAt: key, // deprecated
-				getKeys: getKeys,
+				keys: keys,
+				getKeys: keys, // deprecated
 				length: length,
 				getLength: length, // deprecated
 				bind: bind,
