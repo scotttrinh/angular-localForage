@@ -45,7 +45,7 @@ angular.module('yourModule', ['LocalForageModule'])
     // Start fresh
     $localForage.clearAll();
     $localForage.setItem('myName','Olivier Combe').then(function() {
-        $localForage.get('myName').then(function(data) {
+        $localForage.getItem('myName').then(function(data) {
             var myName = data;
         });
     });
