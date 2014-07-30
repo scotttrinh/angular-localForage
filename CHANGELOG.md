@@ -1,3 +1,13 @@
+<a name="0.2.9"></a>
+# 0.2.9 (2014-07-30)
+
+
+## Features
+
+- update to localforage 0.9.2
+ ([e6c1f19f](https://github.com/ocombe/angular-localForage/commit/e6c1f19fe1b709e990525c5a1d6378378299c205))
+
+
 <a name="0.2.8"></a>
 # 0.2.8 (2014-07-04)
 
