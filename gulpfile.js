@@ -1,23 +1,9 @@
 var gulp = require('gulp');
 
 gulp.task('karma', function() {
-	var karma = require('gulp-karma');
-	var testFiles = [
-		'bower_components/angular/angular.js',
-		'bower_components/angular-mocks/angular-mocks.js',
-		'bower_components/localforage/dist/localforage.min.js',
-		'src/angular-localForage.js',
-		'tests/angular-localForage.js'
-	];
-	return gulp.src(testFiles)
-		.pipe(karma({
-			configFile: 'karma.conf.js',
-			action: 'run'
-		}))
-		.on('error', function(err) {
-			// Make sure failed tests cause gulp to exit non-zero
-			throw err;
-		});
+	var conf = require('./karma.conf').conf;
+	conf.browsers = ['Firefox'];
+	return require('karma-as-promised').server.start(conf);
 });
 
 var build = function(newVer) {

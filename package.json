@@ -13,7 +13,17 @@
     "type": "git",
     "url": "git://github.com/ocombe/angular-localForage.git"
   },
-  "keywords": ["localstorage", "local-storage", "localForage", "indexDB", "webSQL", "storage", "module", "angular", "angularJS"],
+  "keywords": [
+    "localstorage",
+    "local-storage",
+    "localForage",
+    "indexDB",
+    "webSQL",
+    "storage",
+    "module",
+    "angular",
+    "angularJS"
+  ],
   "author": "Olivier Combe <olivier.combe@gmail.com>",
   "bugs": {
     "url": "https://github.com/ocombe/angular-localForage/issues"
@@ -25,11 +35,11 @@
     "gulp-exec": "~2.0.1",
     "gulp-header": "~1.0.2",
     "gulp-json-editor": "~2.0.2",
-    "gulp-karma": "0.0.4",
     "gulp-prompt": "~0.1.1",
     "gulp-rename": "^1.2.0",
     "gulp-uglify": "~0.3.1",
     "karma": "~0.12.16",
+    "karma-as-promised": "~0.2.0",
     "karma-chrome-launcher": "~0.1.4",
     "karma-cli": "~0.0.4",
     "karma-firefox-launcher": "~0.1.3",
