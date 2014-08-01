@@ -1,5 +1,5 @@
 {
-  "name": "angular-localForage",
+  "name": "angular-localforage",
   "main": "dist/angular-localForage.js",
   "version": "0.2.9",
   "homepage": "https://github.com/ocombe/angular-localForage",
