@@ -1,25 +1,19 @@
-/*globals module, config */
+'use strict';
 
 module.exports = function (config) {
-    'use strict';
+  config.set(module.exports.conf);
+};
 
-    config.set({
-        basePath   : '',
-        frameworks : ['jasmine'],
-        files      : [
-            'bower_components/angular/angular.js',
-            'bower_components/angular-mocks/angular-mocks.js',
-            'bower_components/localforage/dist/localforage.min.js',
-            'src/angular-localForage.js',
-            'tests/angular-localForage.js'
-        ],
-        colors    : true,
-        exclude   : [
-        ],
-        port      : 9876,
-        logLevel  : config.LOG_INFO,
-        autoWatch : true,
-        browsers  : ['Chrome', 'Firefox'],
-        singleRun : true
-    });
+module.exports.conf = {
+  frameworks : ['jasmine'],
+  files: [
+    'bower_components/angular/angular.js',
+    'bower_components/angular-mocks/angular-mocks.js',
+    'bower_components/localforage/dist/localforage.js',
+    'src/angular-localForage.js',
+    'tests/angular-localForage.js'
+  ],
+  autoWatch : false,
+  browsers  : ['Chrome', 'Firefox'],
+  singleRun : true
 };

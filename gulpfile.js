@@ -1,23 +1,9 @@
 var gulp = require('gulp');
 
-gulp.task('karma', function() {
-	var karma = require('gulp-karma');
-	var testFiles = [
-		'bower_components/angular/angular.js',
-		'bower_components/angular-mocks/angular-mocks.js',
-		'bower_components/localforage/dist/localforage.min.js',
-		'src/angular-localForage.js',
-		'tests/angular-localForage.js'
-	];
-	return gulp.src(testFiles)
-		.pipe(karma({
-			configFile: 'karma.conf.js',
-			action: 'run'
-		}))
-		.on('error', function(err) {
-			// Make sure failed tests cause gulp to exit non-zero
-			throw err;
-		});
+gulp.task('karma', function(callback) {
+	var conf = require('./karma.conf').conf;
+	conf.browsers = ['Firefox'];
+	return require('karma-as-promised').server.start(conf);
 });
 
 var build = function(newVer) {
@@ -35,10 +21,10 @@ var build = function(newVer) {
 		          ''].join('\n');
 
 	return gulp.src('src/angular-localForage.js')
-		.pipe(header(banner, { pkg : pkg, version: newVer || pkg.version } ))
+		.pipe(header(banner, { pkg: pkg, version: newVer || pkg.version }))
 		.pipe(gulp.dest('dist'))
 		.pipe(uglify())
-		.pipe(header(banner, { pkg : pkg, version: newVer || pkg.version } ))
+		.pipe(header(banner, { pkg: pkg, version: newVer || pkg.version }))
 		.pipe(rename({suffix: '.min'}))
 		.pipe(gulp.dest('dist'));
 }
@@ -56,14 +42,15 @@ var promptBump = function(callback) {
 		.pipe(prompt.prompt({
 			type: 'list',
 			name: 'bump',
-			message: 'What type of version bump would you like to do ? (current version is '+pkg.version+')',
+			message: 'What type of version bump would you like to do ? (current version is ' + pkg.version + ')',
 			choices: [
-				'patch ('+pkg.version+' --> '+semver.inc(pkg.version, 'patch')+')',
-				'minor ('+pkg.version+' --> '+semver.inc(pkg.version, 'minor')+')',
-				'major ('+pkg.version+' --> '+semver.inc(pkg.version, 'major')+')',
+				'patch (' + pkg.version + ' --> ' + semver.inc(pkg.version, 'patch') + ')',
+				'minor (' + pkg.version + ' --> ' + semver.inc(pkg.version, 'minor') + ')',
+				'major (' + pkg.version + ' --> ' + semver.inc(pkg.version, 'major') + ')',
 				'none (exit)'
 			]
-		}, function(res){var newVer;
+		}, function(res) {
+			var newVer;
 			if(res.bump.match(/^patch/)) {
 				newVer = semver.inc(pkg.version, 'patch');
 			} else if(res.bump.match(/^minor/)) {
