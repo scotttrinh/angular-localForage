@@ -100,32 +100,33 @@ describe('Module: LocalForageModule', function () {
     it('service:setItem and getItem should work', function() {
 	    var result = null;
         function run(driver) {
-            myService.setDriver(driver);
-            myService.clear();
-            myService.setItem('myName', 'Olivier Combe').then(function() {
-                myService.getItem('myName').then(function(data) {
-                    result = data;
-                }, function() {
-                    result = false;
-                });
-            }, function() {
-                result = false;
-            });
-
-            waitsFor(function() {
-                return result !== null;
-            });
-
-            runs(function() {
-                expect(result).toEqual('Olivier Combe');
-            });
+	        return runs(function() {
+	            return myService.setDriver(driver).then(function() {
+		            return myService.clear().then(function() {
+			            return myService.setItem('myName', 'Olivier Combe').then(function() {
+				            return myService.getItem('myName').then(function(data) {
+					            expect(data).toEqual('Olivier Combe');
+				            }, function(res) {
+					            console.log(res);
+					            throw('Fail get item, driver = '+driver)
+				            });
+			            }, function(res) {
+				            console.log(res);
+				            throw('Fail set item, driver = '+driver)
+			            });
+		            }, function(res) {
+			            console.log(res);
+			            throw('Fail clear, driver = '+driver)
+		            })
+	            }, function() {
+		            throw('Fail set driver '+driver)
+	            })
+	        });
         }
 
         run('asyncStorage');
         run('localStorageWrapper');
-        if (window.openDatabase) {
-            run('webSQLStorage');
-        }
+        run('webSQLStorage');
     });
 
 });

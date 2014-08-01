@@ -131,7 +131,7 @@
 						deferred.resolve();
 					});
 				}, function error(data) {
-					onError(data, args, clearAll, deferred);
+					onError(data, args, clear, deferred);
 				});
 				return deferred.promise;
 			}
