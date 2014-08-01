@@ -9,10 +9,10 @@ before_script:
 - sh -e /etc/init.d/xvfb start
 deploy:
   provider: npm
-  email: {{email}}
+  email: olivier.combe@gmail.com
   skip_cleanup: true
   api_key:
-    secure: {{key}}
+    secure: lEMo04/NKEZfen4AKkztLd30SLqFmGLwSqTlUM27In31QbGEpA9pQhrZhkiEPfqDK+hE1E6tFsrWtehYt286S7qBL8ki8eTOPt6Ymy/QbSLn0bIwyDjxI0Pfy/CXk26n9e83+w+W1wz2hgHWTlwfY95cJR76SApYwnZJXBEXsXE=
   on:
     tags: true
     all_branches: true
