@@ -13,7 +13,7 @@ module.exports.conf = {
     'src/angular-localForage.js',
     'tests/angular-localForage.js'
   ],
-  autoWatch : true,
+  autoWatch : false,
   browsers  : ['Chrome', 'Firefox'],
   singleRun : true
 };
