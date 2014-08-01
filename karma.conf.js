@@ -65,7 +65,7 @@ module.exports = function(config) {
 		// Debug logging into a file, that we print out at the end of the build.
 		config.loggers.push({
 			type: 'file',
-			filename: process.env.LOGS_DIR + '/' + (specificOptions.logFile || 'karma.log')
+			filename: process.env.LOGS_DIR + '/karma.log'
 		});
 	}
 };
