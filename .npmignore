@@ -1,0 +1,9 @@
+.npmignore
+example/
+src/
+tests/
+bower.json
+changelog.js
+gulpfile.js
+karma.conf.js
+validate-commit-msg.js
