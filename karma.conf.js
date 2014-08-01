@@ -2,7 +2,7 @@ var customLaunchers = {
 	sl_chrome: {
 		base: 'SauceLabs',
 		browserName: 'chrome'
-	}/*,
+	},
 	sl_firefox: {
 		base: 'SauceLabs',
 		browserName: 'firefox',
@@ -37,7 +37,7 @@ var customLaunchers = {
 		browserName: 'internet explorer',
 		platform: 'Windows 8.1',
 		version: '11'
-	}*/
+	}
 };
 
 module.exports = function(config) {
@@ -52,9 +52,6 @@ module.exports = function(config) {
 		config.logLevel = config.LOG_DEBUG;
 		config.transports = ['websocket', 'xhr-polling'];
 		config.captureTimeout = 0; // rely on SL timeout
-
-		config.browserStack.build = buildLabel;
-		config.browserStack.startTunnel = false;
 
 		config.sauceLabs.build = buildLabel;
 		config.sauceLabs.startConnect = false;
@@ -94,9 +91,7 @@ module.exports.conf = {
 		connectOptions: {
 			port: 5757,
 			logfile: 'sauce_connect.log'
-		},
-		username: 'oliviercombe',
-		accessKey: '52c7b169-e03b-4aea-9322-52a60dbd5980'
+		}
 	},
 	// Increase timeout in case connection in CI is slow
 	captureTimeout: 120000,
