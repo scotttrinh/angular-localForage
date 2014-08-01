@@ -1,4 +1,4 @@
-angular-localForage
+angular-localForage [![Build Status](https://travis-ci.org/ocombe/angular-localForage.svg)](https://travis-ci.org/ocombe/angular-localForage)
 ===================
 
 Angular service &amp; directive for https://github.com/mozilla/localForage (Offline storage, improved.)
