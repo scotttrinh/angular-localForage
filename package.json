@@ -36,7 +36,7 @@
     "gulp-json-editor": "~2.0.2",
     "gulp-prompt": "~0.1.1",
     "gulp-rename": "^1.2.0",
-    "gulp-rimraf": "^0.3.1",
+    "gulp-rimraf": "^0.1.0",
     "gulp-uglify": "~0.3.1",
     "karma": "~0.12.19",
     "karma-as-promised": "~0.2.0",
