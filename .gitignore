@@ -16,3 +16,5 @@ npm-debug.log
 .sass-cache
 bower_components
 .idea/*
+sauce_connect.log
+sc_karma*
