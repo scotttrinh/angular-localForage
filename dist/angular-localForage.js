@@ -214,7 +214,7 @@
 				// Set the storeName key for the LocalForage entry
 				// use user defined in specified
 				var storeName = opts.storeName || opts.key,
-					model = $parse(opts.key);
+					model = $parse(storeName);
 
 				return getItem(storeName).then(function(item) {
 					if(item) { // If it does exist assign it to the $scope value
