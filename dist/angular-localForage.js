@@ -1,5 +1,5 @@
 /**
- * angular-localForage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
+ * angular-localforage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
  * @version v0.2.9
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
@@ -138,7 +138,7 @@
 						deferred.resolve();
 					});
 				}, function error(data) {
-					onError(data, args, clearAll, deferred);
+					onError(data, args, clear, deferred);
 				});
 				return deferred.promise;
 			}
