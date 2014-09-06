@@ -87,6 +87,17 @@
 				if (angular.isObject(value) && angular.isDefined(value.$promise)) {
 					delete value.$promise; //delete attribut from object structure.
 				}
+
+				//avoid $$hashKey attributes from value arrays, if is there.
+				if (angular.isArray(value)) {
+					angular.forEach(value, function(subvalue, key){
+						if (angular.isDefined(subvalue.$$hashKey)) {
+							if (key === 0) {
+								value = angular.fromJson(angular.toJson(value));
+							}
+						}
+					});
+				}
 				
 				localforage.setItem(prefix() + key, value).then(function success() {
 					if(notify.setItem) {
