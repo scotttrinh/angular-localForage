@@ -129,4 +129,36 @@ describe('Module: LocalForageModule', function () {
         run('webSQLStorage');
     });
 
+    it('service:setItem should strip $$hashKey from arrays used in ngRepeat', function() {
+	    var result = null;
+        function run(driver) {
+	        return runs(function() {
+	            return myService.setDriver(driver).then(function() {
+		            return myService.clear().then(function() {
+			            return myService.setItem('myArray', [{$$hashKey: '00A', name:'Andrew Davis'}]).then(function() {
+				            return myService.getItem('myArray').then(function(data) {
+					            expect(data).toEqual([{name:'Andrew Davis'}]);
+				            }, function(res) {
+					            console.log(res);
+					            throw('Fail get item, driver = '+driver)
+				            });
+			            }, function(res) {
+				            console.log(res);
+				            throw('Fail set item, driver = '+driver)
+			            });
+		            }, function(res) {
+			            console.log(res);
+			            throw('Fail clear, driver = '+driver)
+		            })
+	            }, function() {
+		            throw('Fail set driver '+driver)
+	            })
+	        });
+        }
+
+        run('asyncStorage');
+        run('localStorageWrapper');
+        run('webSQLStorage');
+    });
+
 });

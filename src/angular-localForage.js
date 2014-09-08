@@ -74,18 +74,19 @@
 			// Directly adds a value to storage
 			var setItem = function(key, value) {
 				var deferred = $q.defer(),
-					args = arguments;
+					args = arguments,
+					localCopy = angular.copy(value);
 
-				//avoid $promises attributes from value objects, if is there.
-				if (angular.isObject(value) && angular.isDefined(value.$promise)) {
-					delete value.$promise; //delete attribut from object structure.
+				//avoid $promises attributes from value objects, if present.
+				if (angular.isObject(localCopy) && angular.isDefined(localCopy.$promise)) {
+					delete localCopy.$promise; //delete attribut from object structure.
 				}
 				
-				localforage.setItem(prefix() + key, value).then(function success() {
+				localforage.setItem(prefix() + key, localCopy).then(function success() {
 					if(notify.setItem) {
-						$rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: value, driver: localforage.driver()});
+						$rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: localCopy, driver: localforage.driver()});
 					}
-					deferred.resolve(value);
+					deferred.resolve(localCopy);
 				}, function error(data) {
 					onError(data, args, setItem, deferred);
 				});
