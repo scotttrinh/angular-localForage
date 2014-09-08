@@ -73,6 +73,11 @@
 
 			// Directly adds a value to storage
 			var setItem = function(key, value) {
+				// throw error on undefined key, we allow undefined value because... why not ?
+				if(angular.isUndefined(key)) {
+					throw new Error("You must define a key to set");
+				}
+
 				var deferred = $q.defer(),
 					args = arguments,
 					localCopy = angular.copy(value);
@@ -96,8 +101,14 @@
 
 			// Directly get a value from storage
 			var getItem = function(key) {
+				// throw error on undefined key
+				if(angular.isUndefined(key)) {
+					throw new Error("You must define a key to get");
+				}
+
 				var deferred = $q.defer(),
 					args = arguments;
+
 				localforage.getItem(prefix() + key).then(function success(item) {
 					deferred.resolve(item);
 				}, function error(data) {
@@ -108,6 +119,11 @@
 
 			// Remove an item from storage
 			var removeItem = function(key) {
+				// throw error on undefined key
+				if(angular.isUndefined(key)) {
+					throw new Error("You must define a key to remove");
+				}
+
 				var deferred = $q.defer(),
 					args = arguments;
 
@@ -147,8 +163,14 @@
 
 			// Return the key for item at position n
 			var key = function(n) {
+				// throw error on undefined n
+				if(angular.isUndefined(n)) {
+					throw new Error("You must define a position to get for the key function");
+				}
+
 				var deferred = $q.defer(),
 					args = arguments;
+
 				localforage.key(n).then(function success(key) {
 					deferred.resolve(key);
 				}, function error(data) {
@@ -172,6 +194,7 @@
 			var keys = function() {
 				var deferred = $q.defer(),
 					args = arguments;
+
 				localforage.keys().then(function success(keyList) {
 					// because we may have a prefix, extract only related keys
 					var p = prefix(),
@@ -204,12 +227,14 @@
 						key: opts
 					}
 				} else if(!angular.isObject(opts) || angular.isUndefined(opts.key)) {
-					throw "You must defined a key to bind";
+					throw new Error("You must define a key to bind");
 				}
+
 				var defaultOpts = {
 					defaultValue: '',
 					storeName: ''
 				};
+
 				// If no defined options we use defaults otherwise extend defaults
 				opts = angular.extend(defaultOpts, opts || {});
 
