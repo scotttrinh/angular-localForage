@@ -108,13 +108,21 @@
 
 			// Remove an item from storage
 			var removeItem = function(key) {
-				var promise = localforage.removeItem(prefix() + key);
+				var deferred = $q.defer(),
+					args = arguments;
+
+				localforage.removeItem(prefix() + key).then(function success() {
+					deferred.resolve();
+				}, function error(data) {
+					onError(data, args, removeItem, deferred);
+				});
+
 				if(notify.removeItem) {
-					return promise.then(function(value) {
+					return deferred.promise.then(function(value) {
 						$rootScope.$broadcast('LocalForageModule.removeItem', {key: key, driver: localforage.driver()});
 					});
 				} else {
-					return promise;
+					return deferred.promise;
 				}
 			};
 
