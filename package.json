@@ -7,6 +7,7 @@
   "homepage": "https://github.com/ocombe/angular-localForage",
   "scripts": {
     "test": "karma start ./karma.conf.js",
+    "dev-test": "karma start ./karma.conf.js --browsers=\"Firefox,Chrome\"",
     "build": "gulp build"
   },
   "repository": {
