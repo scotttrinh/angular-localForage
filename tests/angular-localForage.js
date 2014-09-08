@@ -98,7 +98,6 @@ describe('Module: LocalForageModule', function () {
     });
 
     it('service:setItem and getItem should work', function() {
-	    var result = null;
         function run(driver) {
 	        return runs(function() {
 	            return myService.setDriver(driver).then(function() {
@@ -130,7 +129,6 @@ describe('Module: LocalForageModule', function () {
     });
 
     it('service:setItem should strip $$hashKey from arrays used in ngRepeat', function() {
-	    var result = null;
         function run(driver) {
 	        return runs(function() {
 	            return myService.setDriver(driver).then(function() {
