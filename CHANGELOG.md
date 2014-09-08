@@ -1,3 +1,25 @@
+<a name="0.2.10"></a>
+# 0.2.10 (2014-09-08)
+
+
+## Bug Fixes
+
+- use angular.copy before storing values
+ ([e4707d3e](https://github.com/ocombe/angular-localForage/commit/e4707d3e3d136f399c6408e48f6262a23e872d66),
+ [#29](https://github.com/ocombe/angular-localForage/issues/29))
+- use correct model to allow multiple binding
+ ([42f41d3a](https://github.com/ocombe/angular-localForage/commit/42f41d3a06404f085b2075ff25f2346b43343c39),
+ [#28](https://github.com/ocombe/angular-localForage/issues/28))
+- fixed tests for all browsers
+ ([06258791](https://github.com/ocombe/angular-localForage/commit/06258791b43d8f581f80adcf6e021f3de7153992))
+
+
+## Documentation
+
+- updated readme with lowercase name of the lib for bower & npm
+ ([809c6636](https://github.com/ocombe/angular-localForage/commit/809c663600c87daba6b7890a22135bd5c2fb91dd))
+
+
 <a name="0.2.9"></a>
 # 0.2.9 (2014-07-30)
 
