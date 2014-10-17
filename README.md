@@ -18,103 +18,92 @@ This angularJS module is a rewrite of [angular-local-storage by grevory](https:/
 - Use the service or the directive
 
 ## Usage :
-- Download the project or install via bower ```bower install angular-localforage``` or npm ```npm install angular-localforage```
+- Download the project or install via bower `bower install angular-localforage` or npm `npm install angular-localforage`
 - Download localForage https://github.com/mozilla/localForage
-- Put angular-localStorage.js and localforage.js into you project
-- Add the module ```LocalForageModule``` to your application
+- Put angular-localForage.js and localforage.js into you project
+- Add the module `LocalForageModule` to your application
 ```js
 angular.module('yourModule', ['LocalForageModule']);
 ```
-- (optional) Configure the ```$localForageProvider```
-```js
-angular.module('yourModule', ['LocalForageModule'])
-.config(['$localForageProvider', function($localForageProvider){
-    $localForageProvider.config({
-        driver      : 'localStorageWrapper', // if you want to force a driver
-        name        : 'myApp', // name of the database and prefix for your data
-        version     : 1.0, // version of the database, you shouldn't have to use this
-        storeName   : 'keyvaluepairs', // name of the table
-        description : 'some description'
-    });
-}]);
-```
-- Use the ```$localForage``` service or the ```local-forage``` directive
+- (optional) Configure the `$localForageProvider`. See [below](#configure-the-provider-) for details.
+- Use the `$localForage` service or the `local-forage` directive
 ```js
 angular.module('yourModule', ['LocalForageModule'])
 .controller('yourCtrl', ['$scope', '$localForage', function($scope, $localForage) {
-    // Start fresh
-    $localForage.clearAll();
     $localForage.setItem('myName','Olivier Combe').then(function() {
         $localForage.getItem('myName').then(function(data) {
             var myName = data;
         });
     });
-
-    $scope.params = {
-        test: 'value'
-    };
 }]);
 ```
 ```html
-<div local-forage="params"></div>
+<input local-forage="{key: 'autoStoredKey', name: 'myApp', scopeKey: 'myObj.myVar', defaultValue: 'this is the default value'}" ng-model="myObj.myVar" placeholder="This will be auto stored">
 ```
 
 ## Functions :
-- ```setDriver(driver)```: you can force the driver to use, check the [localForage documentation](https://github.com/mozilla/localForage#driver-selection-ie-forcing-localstorage) for more information
+- `setDriver(driver)`: you can force the driver to use, check the [localForage documentation](https://github.com/mozilla/localForage#driver-selection-ie-forcing-localstorage) for more information
 
-- ```driver()```: returns the current localForage driver (sync)
+- `driver()`: returns the current localForage driver (sync)
 
-- ```setItem(key, value)```: stores data (async, promise)
+- `setItem(key, value)`: stores data (async, promise)
 
-- ```getItem(key)```: retrieves stored data (async, promise)
+- `getItem(key)`: retrieves stored data (async, promise)
 
-- ```removeItem(key)```: removes stored data (async, promise)
+- `removeItem(key)`: removes stored data (async, promise)
 
-- ```clear()```: removed all stored data for your application based on the app prefix (async, promise)
+- `clear()`: removed all stored data for your application based on the app prefix (async, promise)
 
-- ```key(n)```: retrieves the key at n position in storage. Used internally for clearAll and getKeys functions. It doesn't take prefix into account (async, promise)
+- `key(n)`: retrieves the key at n position in storage. It doesn't take the prefix into account if you use localStorage (async, promise)
 
-- ```getKeys(driver)```: returns all the keys used for storage in your application. Be careful with it if you use localstorage because it will return all the keys (not just the ones with your prefix) (async, promise)
+- `keys()`: returns all the keys used for storage in your application (async, promise)
 
-- ```length(driver)```: returns the number of items stored. Used internally for clearAll and getKeys functions. Be careful with it if you use localstorage because it will return all the keys (not just the ones with your prefix) (async, promise)
+- `length()`: returns the number of items stored (async, promise)
 
-- ```bind($scope, key/params object)```: lets you directly bind a LocalForage value to a $scope variable
+- `bind($scope, key/params object)`: lets you directly bind a LocalForage value to a $scope variable (async, promise)
 ```js
-$localForage.bind($scope, 'params');
+$localForage.bind($scope, 'myStorageKey');
 ```
+
 ```js
 $localForage.bind($scope, {
-    key: 'params',
-    defaultValue: {test: 'my test'},
-    storeName: 'myStoreName'
+    key: 'myStorageKey', // required
+    defaultValue: {test: 'my test'}, // a default value
+    scopeKey: 'myObj.myVar', // the name of the scope key (if you want it to be different from key)
+    name: 'myApp' // instance name
 });
 ```
 
-- ```unbind($scope, key[, storeName])```: lets you unbind a variable from localForage while removing the value from both
+- `unbind($scope, key[, scopeKey])`: lets you unbind a variable from localForage while removing the value from both the scope and the storage (async, promise)
 
 ## Directive :
-You can directly bind a scope value from within your html :
-```js
-angular.module('yourModule', ['LocalForageModule']).controller('yourCtrl', ['$scope', function($scope) {
-    $scope.params = {
-        test: 'value'
-    };
-}]);
-```
+You can directly bind a scope value from within your html. With the `local-forage` directive, you can either use just the key parameter:
 ```html
-<div local-forage="params"></div>
-```
-```html
-<div local-forage="{key: 'params', storeName: 'myStoreName'}"></div>
+<input local-forage="autoStoredKey" ng-model="autoStoredKey" placeholder="This will be auto stored">
 ```
 
+Or give an object parameter:
+```html
+<input local-forage="{key: 'autoStoredKey', name: 'myApp', scopeKey: 'myObj.myVar', defaultValue: 'this is the default value'}" ng-model="myObj.myVar" placeholder="This will be auto stored">
+```
+
+`key` is the only required parameter. The other options are:
+- `name`: if you want to store your values in a specific instance (See [below](#multiple-instances) for more info on multiple instances)
+- `scopeKey`: if you want to store the value in the scope under a different key from the one in storage. You can for example use a specific key of an object by using `myObj.myVar`
+- `defaultValue`: if you want to define a ...default value
+
 ## Configure the provider :
-You can configure the ```$localForageProvider``` to set your own prefix for storage. By default ```lf``` is used.
+You can configure the `$localForageProvider`. Any parameter that you set here will be the default for any new localforage instance.
+You can for example set your own prefix for storage (by default `lf` is used).
 ```js
 angular.module('yourModule', ['LocalForageModule'])
 .config(['$localForageProvider', function($localForageProvider){
     $localForageProvider.config({
-        name: 'yourprefix'
+        driver      : 'localStorageWrapper', // if you want to force a driver
+        name        : 'myApp', // name of the database and prefix for your data, it is "lf" by default
+        version     : 1.0, // version of the database, you shouldn't have to use this
+        storeName   : 'keyvaluepairs', // name of the table
+        description : 'some description'
     });
 }]);
 ```
@@ -133,13 +122,23 @@ $rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: value, d
 $rootScope.$broadcast('LocalForageModule.removeItem', {key: key, driver: localforage.driver});
 ```
 
-And finally you can set the driver.
+## Multiple instances
+You can use multiple instances of localForage at the same time. To create a new instance, call `createInstance` with a config object (sync):
 ```js
-angular.module('yourModule', ['LocalForageModule'])
-.config(['$localForageProvider', function($localForageProvider){
-    $localForageProvider.setDriver('localStorageWrapper');
-}]);
+    var lf2 = $localForage.createInstance({
+		name: '2nd',
+		driver: 'localStorageWrapper'
+	});
 ```
+
+The parameters will inherit the default parameters that you might have configured in the config phase of your application (See [above](#configure-the-provider-) for details), but the new config object will overwrite them.
+It means that you can have one instance using localStorage, and one instance using indexedDB/WebSQL, at the same time !
+The instance will take the name that you will define in the config object. You can get an instance previously created by using the `instance` method:
+```js
+    var lf2 = $localForage.instance('2nd');
+```
+
+The `instance` method will return the default instance if you don't give a name parameter.
 
 ## Unit tests
 Download the required libs :
@@ -154,7 +153,7 @@ Then start the tests with :
 npm test
 ```
 
-It will launch Chrome and Firefox, edit karma.conf.js if you want to change something.
+It will launch Chrome and Firefox, edit karma.conf.js if you want to change something. We could use more tests, see "contributing" below.
 
 ##Contributing
 

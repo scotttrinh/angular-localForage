@@ -5,10 +5,18 @@
         <title>localForage example</title>
     </head>
     <body ng-controller="MyCtrl">
-        <input ng-model="myText">
+        Manual store: <input ng-model="myText">
         <button ng-click="store(myText)">Save</button>
 
         <div class="ng-cloak">Stored value: {{ myTextStored }}</div>
+
+        <br/>
+        <br/>
+
+        Auto store:
+        <input local-forage="{key: 'autoStoredKey', name: '2nd', scopeKey: 'myObj.myVar', defaultValue: 'This is a default value'}" ng-model="myObj.myVar" placeholder="This will be auto stored">
+
+        <div class="ng-cloak">Stored value: {{ myObj.myVar }}</div>
 
         <script src="../bower_components/angular/angular.js"></script>
         <script src="../bower_components/localforage/dist/localforage.js"></script>

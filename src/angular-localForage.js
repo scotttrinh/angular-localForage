@@ -3,31 +3,20 @@
 
 	var angularLocalForage = angular.module('LocalForageModule', ['ng']);
 	angularLocalForage.provider('$localForage', function() {
-		localforage.config({
-			name: 'lf' // default prefix
-		});
-
-		// Send signals for each of the following actions ?
-		this.notify = {
-			setItem: false,
-			removeItem: false
-		};
-
-		// Setter for the storage driver
-		var setDriver = function(driver) {
-			return localforage.setDriver(driver);
-		};
-
-		this.setDriver = setDriver;
-
-		// Getter for the storage driver
-		var driver = function() {
-			return localforage.driver();
-		};
+        var lfInstances = {},
+	        defaultConfig = {
+		        name: 'lf'
+	        },
+            // Send signals for each of the following actions ?
+	        notify = {
+		        setItem: false,
+		        removeItem: false
+	        },
+	        watchers = {};
 
 		// Setter for notification config, itemSet & itemRemove should be booleans
 		this.setNotify = function(itemSet, itemRemove) {
-			this.notify = {
+			notify = {
 				setItem: itemSet,
 				removeItem: itemRemove
 			};
@@ -35,44 +24,61 @@
 
 		this.config = function(config) {
 			if(!angular.isObject(config)) {
-				config = {};
+				throw new Error('The config parameter should be an object');
 			}
-			if(angular.isDefined(config.driver)) {
-				localforage.config(config);
-				return setDriver(config.driver);
-			} else {
-				return localforage.config(config);
-			}
-		}
+			angular.extend(defaultConfig, config);
+		};
 
 		this.$get = ['$rootScope', '$q', '$parse', function($rootScope, $q, $parse) {
-			var notify = this.notify;
-			var watchers = {};
-
-            var prefix = function() {
-                return driver() === 'localStorageWrapper' ? localforage.config().name + '.' : '';
-            }
-
-			var onError = function(err, args, fct, deferred) {
-				// test for private browsing errors in Firefox & Safari
-				if(((angular.isObject(err) && err.name ? err.name === 'InvalidStateError' : (angular.isString(err) && err === 'InvalidStateError')) && driver() === 'asyncStorage')
-					|| (angular.isObject(err) && err.code && err.code === 5)) {
-					setDriver('localStorageWrapper').then(function() {
-						fct.apply(this, args).then(function(item) {
-							deferred.resolve(item);
-						}, function(data) {
-							deferred.reject(data);
-						});
-					}, function() {
-						deferred.reject(err);
-					});
+			var LocalForageInstance = function LocalForageInstance(params) {
+				if(angular.isDefined(params)) {
+					this._localforage = localforage.createInstance(params);
 				} else {
-					deferred.reject(err);
+					this._localforage = localforage;
+					localforage.config(defaultConfig);
 				}
-			}
+			};
+
+			LocalForageInstance.prototype.createInstance = function createInstance(config) {
+				if(angular.isObject(config)) { // create new instance
+					config = angular.extend({}, defaultConfig, config);
+					if(angular.isDefined(lfInstances[config.name])) {
+						throw new Error('A localForage instance with the name '+ config.name +' is already defined.');
+					}
+
+					lfInstances[config.name] = new LocalForageInstance(config);
+					return lfInstances[config.name];
+				} else {
+					throw new Error('The parameter should be a config object.')
+				}
+			};
+
+			LocalForageInstance.prototype.instance = function instance(name) {
+				if(angular.isUndefined(name)) {
+					return lfInstances[defaultConfig.name];
+				} else if(angular.isString(name)) {
+					if(angular.isDefined(lfInstances[name])) {
+						return lfInstances[name];
+					} else {
+						throw new Error('No localForage instance of that name exists.')
+					}
+				} else {
+					throw new Error('The parameter should be a string.')
+				}
+			};
+
+			// Setter for the storage driver
+			LocalForageInstance.prototype.setDriver = function setDriver(driver) {
+				return this._localforage.setDriver(driver);
+			};
+
+			// Getter for the storage driver
+			LocalForageInstance.prototype.driver = function driver() {
+				return this._localforage.driver();
+			};
 
 			// Directly adds a value to storage
-			var setItem = function(key, value) {
+			LocalForageInstance.prototype.setItem = function setItem(key, value) {
 				// throw error on undefined key, we allow undefined value because... why not ?
 				if(angular.isUndefined(key)) {
 					throw new Error("You must define a key to set");
@@ -80,148 +86,156 @@
 
 				var deferred = $q.defer(),
 					args = arguments,
-					localCopy = angular.copy(value);
+					localCopy = angular.copy(value),
+					self = this;
 
 				//avoid $promises attributes from value objects, if present.
 				if (angular.isObject(localCopy) && angular.isDefined(localCopy.$promise)) {
 					delete localCopy.$promise; //delete attribut from object structure.
 				}
-				
-				localforage.setItem(prefix() + key, localCopy).then(function success() {
+
+				self._localforage.setItem(self.prefix() + key, localCopy).then(function success() {
 					if(notify.setItem) {
-						$rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: localCopy, driver: localforage.driver()});
+						$rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: localCopy, driver: self.driver()});
 					}
 					deferred.resolve(localCopy);
 				}, function error(data) {
-					onError(data, args, setItem, deferred);
+					self.onError(data, args, self.setItem, deferred);
 				});
 
 				return deferred.promise;
 			};
 
 			// Directly get a value from storage
-			var getItem = function(key) {
+			LocalForageInstance.prototype.getItem = function getItem(key) {
 				// throw error on undefined key
 				if(angular.isUndefined(key)) {
 					throw new Error("You must define a key to get");
 				}
 
 				var deferred = $q.defer(),
-					args = arguments;
+					args = arguments,
+					self = this;
 
-				localforage.getItem(prefix() + key).then(function success(item) {
+				self._localforage.getItem(self.prefix() + key).then(function success(item) {
 					deferred.resolve(item);
 				}, function error(data) {
-					onError(data, args, getItem, deferred);
+					self.onError(data, args, self.getItem, deferred);
 				});
 				return deferred.promise;
 			};
 
 			// Remove an item from storage
-			var removeItem = function(key) {
+			LocalForageInstance.prototype.removeItem = function removeItem(key) {
 				// throw error on undefined key
 				if(angular.isUndefined(key)) {
 					throw new Error("You must define a key to remove");
 				}
 
 				var deferred = $q.defer(),
-					args = arguments;
+					args = arguments,
+					self = this;
 
-				localforage.removeItem(prefix() + key).then(function success() {
+				self._localforage.removeItem(self.prefix() + key).then(function success() {
 					deferred.resolve();
 				}, function error(data) {
-					onError(data, args, removeItem, deferred);
+					self.onError(data, args, self.removeItem, deferred);
 				});
 
 				if(notify.removeItem) {
 					return deferred.promise.then(function(value) {
-						$rootScope.$broadcast('LocalForageModule.removeItem', {key: key, driver: localforage.driver()});
+						$rootScope.$broadcast('LocalForageModule.removeItem', {key: key, driver: self.driver()});
 					});
 				} else {
 					return deferred.promise;
 				}
 			};
 
-			// Remove all data for this app from storage (we could use localforage.clear(); but we don't want to remove things without the prefix
-			var clear = function() {
+			// Remove all data for this app from storage
+			LocalForageInstance.prototype.clear = function clear() {
 				var deferred = $q.defer(),
 					args = arguments,
-					promises = [];
-				keys().then(function success(keys) {
-					angular.forEach(keys, function(key) {
-						promises.push(removeItem(key));
-					});
+					self = this;
 
-					$q.all(promises).then(function() {
-						deferred.resolve();
-					});
+				self._localforage.clear().then(function success(keys) {
+					deferred.resolve();
 				}, function error(data) {
-					onError(data, args, clear, deferred);
+					self.onError(data, args, self.clear, deferred);
 				});
 				return deferred.promise;
-			}
+			};
 
 			// Return the key for item at position n
-			var key = function(n) {
+			LocalForageInstance.prototype.key = function key(n) {
 				// throw error on undefined n
 				if(angular.isUndefined(n)) {
 					throw new Error("You must define a position to get for the key function");
 				}
 
 				var deferred = $q.defer(),
-					args = arguments;
+					args = arguments,
+					self = this;
 
-				localforage.key(n).then(function success(key) {
+				self._localforage.key(n).then(function success(key) {
 					deferred.resolve(key);
 				}, function error(data) {
-					onError(data, args, key, deferred);
+					self.onError(data, args, self.key, deferred);
 				});
 				return deferred.promise;
 			};
 
-			var length = function() {
+			var keys = function keys() {
 				var deferred = $q.defer(),
-					args = arguments; // using $q to avoid using $apply
-				localforage.length().then(function success(length) {
-					deferred.resolve(length);
+					args = arguments,
+					self = this;
+
+				self._localforage.keys().then(function success(keyList) {
+					if(defaultConfig.oldPrefix && self.driver() === 'localStorageWrapper') {
+						var tempKeyList = [];
+						for(var i = 0, len = keyList.length; i < len; i++) {
+							tempKeyList.push(keyList[i].substr(self.prefix().length, keyList[i].length));
+						}
+						keyList = tempKeyList;
+					}
+					deferred.resolve(keyList);
 				}, function error(data) {
-					onError(data, args, length, deferred);
+					self.onError(data, args, self.keys, deferred);
 				});
 				return deferred.promise;
-			}
+			};
 
 			// Return the list of keys stored for this application
-			var keys = function() {
-				var deferred = $q.defer(),
-					args = arguments;
+			LocalForageInstance.prototype.keys = keys;
 
-				localforage.keys().then(function success(keyList) {
-					// because we may have a prefix, extract only related keys
-					var p = prefix(),
-						fixedKeyList = [];
-					for(var i = 0, len = keyList.length; i < len; i++) {
-						if(!!keyList[i] && keyList[i].indexOf(p) === 0) {
-							fixedKeyList.push(keyList[i].substr(p.length, keyList[i].length));
-						}
-					}
-					deferred.resolve(fixedKeyList);
+			// deprecated
+			LocalForageInstance.prototype.getKeys = keys;
+
+			// Returns the number of keys in this storage
+			LocalForageInstance.prototype.length = function() {
+				var deferred = $q.defer(),
+					args = arguments,
+					self = this;
+
+				self._localforage.length().then(function success(length) {
+					deferred.resolve(length);
 				}, function error(data) {
-					onError(data, args, keys, deferred);
+					self.onError(data, args, length, deferred);
 				});
 				return deferred.promise;
-			}
+			};
 
 			/**
 			 * Bind - let's you directly bind a LocalForage value to a $scope variable
 			 * @param {Angular $scope} $scope - the current scope you want the variable available in
-			 * @param {String} key - the name of the variable you are binding
-			 * @param {String} key - the name of the variable you are binding OR {Object} opts - key and custom options like default value or unique store name
+			 * @param {String/Object} opts - the key name of the variable you are binding OR an object with the key and custom options like default value or instance name
 			 * Here are the available options you can set:
+			 * * key: the key used in storage and in the scope (if scopeKey isn't defined)
 			 * * defaultValue: the default value
-			 * * storeName: add a custom store key value instead of using the scope variable name
+			 * * name: name of the instance that should store the data
+			 * * scopeKey: the key used in the scope
 			 * @returns {*} - returns whatever the stored value is
 			 */
-			var bind = function($scope, opts) {
+			LocalForageInstance.prototype.bind = function bind($scope, opts) {
 				if(angular.isString(opts)) {
 					opts = {
 						key: opts
@@ -232,22 +246,29 @@
 
 				var defaultOpts = {
 					defaultValue: '',
-					storeName: ''
+					name: defaultConfig.name
 				};
 
 				// If no defined options we use defaults otherwise extend defaults
-				opts = angular.extend(defaultOpts, opts || {});
+				opts = angular.extend({}, defaultOpts, opts);
+
+				var self = lfInstances[opts.name];
+
+				if(angular.isUndefined(self)) {
+					throw new Error("You must use the name of an existing instance");
+				}
 
 				// Set the storeName key for the LocalForage entry
 				// use user defined in specified
-				var storeName = opts.storeName || opts.key,
-					model = $parse(storeName);
+				var scopeKey = opts.scopeKey || opts.key,
+					model = $parse(scopeKey);
 
-				return getItem(storeName).then(function(item) {
+				return self.getItem(opts.key).then(function(item) {
 					if(item) { // If it does exist assign it to the $scope value
 						model.assign($scope, item);
 					} else if(opts.defaultValue) { // If a value doesn't already exist store it as is
-						setItem(storeName, opts.defaultValue);
+						model.assign($scope, opts.defaultValue);
+						self.setItem(opts.key, opts.defaultValue);
 					}
 
 					// Register a listener for changes on the $scope value
@@ -256,53 +277,82 @@
 						watchers[opts.key]();
 					}
 
-					watchers[opts.key] = $scope.$watch($parse(opts.key), function(val) {
+					watchers[opts.key] = $scope.$watch(scopeKey, function(val) {
 						if(angular.isDefined(val)) {
-							setItem(storeName, val);
+							self.setItem(opts.key, val);
 						}
 					}, true);
 					return item;
 				});
-			}
+			};
 
 			/**
 			 * Unbind - let's you unbind a variable from localForage while removing the value from both
 			 * the localForage and the local variable and sets it to null
-			 * @param $scope - the scope the variable was initially set in
-			 * @param key - the name of the variable you are unbinding
-			 * @param storeName - (optional) if you used a custom storeName you will have to specify it here as well
+			 * @param {String/Object} opts - the key name of the variable you are unbinding OR an object with the key and custom options like default value or instance name
+			 * Here are the available options you can set:
+			 * * key: the key used in storage and in the scope (if scopeKey isn't defined)
+			 * * name: name of the instance that should store the data
+			 * * scopeKey: the key used in the scope
 			 */
-			var unbind = function($scope, key, storeName) {
-				storeName = storeName || key;
-				$parse(key).assign($scope, null);
-				if(angular.isDefined(watchers[key])) {
-					watchers[key](); // unwatch
-					delete watchers[key];
+			LocalForageInstance.prototype.unbind = function unbind($scope, opts) {
+				if(angular.isString(opts)) {
+					opts = {
+						key: opts
+					}
+				} else if(!angular.isObject(opts) || angular.isUndefined(opts.key)) {
+					throw new Error("You must define a key to unbind");
 				}
-				removeItem(storeName);
-			}
 
-			return {
-				setDriver: setDriver,
-                driver: driver,
-				getDriver: driver, // deprecated
-				setItem: setItem,
-                set: setItem, // deprecated
-                getItem: getItem,
-                get: getItem, // deprecated
-				remove: removeItem,
-                removeItem: removeItem, // deprecated
-				clear: clear,
-				clearAll: clear, // deprecated
-                key: key,
-				getKeyAt: key, // deprecated
-				keys: keys,
-				getKeys: keys, // deprecated
-				length: length,
-				getLength: length, // deprecated
-				bind: bind,
-				unbind: unbind
+				var defaultOpts = {
+					scopeKey: opts.key,
+					name: defaultConfig.name
+				};
+
+				// If no defined options we use defaults otherwise extend defaults
+				opts = angular.extend({}, defaultOpts, opts);
+
+				var self = lfInstances[opts.name];
+
+				if(angular.isUndefined(self)) {
+					throw new Error("You must use the name of an existing instance");
+				}
+
+				$parse(opts.scopeKey).assign($scope, null);
+				if(angular.isDefined(watchers[opts.key])) {
+					watchers[opts.key](); // unwatch
+					delete watchers[opts.key];
+				}
+				return self.removeItem(opts.key);
 			};
+
+			LocalForageInstance.prototype.prefix = function() {
+				return this.driver() === 'localStorageWrapper' && defaultConfig.oldPrefix ? this._localforage.config().name + '.' : '';
+			};
+
+			// Handling errors
+			LocalForageInstance.prototype.onError = function(err, args, fct, deferred) {
+				// test for private browsing errors in Firefox & Safari
+				if(((angular.isObject(err) && err.name ? err.name === 'InvalidStateError' : (angular.isString(err) && err === 'InvalidStateError')) && this.driver() === 'asyncStorage')
+					|| (angular.isObject(err) && err.code && err.code === 5)) {
+					var self = this;
+
+					self.setDriver('localStorageWrapper').then(function() {
+						fct.apply(self, args).then(function(item) {
+							deferred.resolve(item);
+						}, function(data) {
+							deferred.reject(data);
+						});
+					}, function() {
+						deferred.reject(err);
+					});
+				} else {
+					deferred.reject(err);
+				}
+			};
+
+			lfInstances[defaultConfig.name] = new LocalForageInstance();
+			return lfInstances[defaultConfig.name];
 		}]
 	});
 
@@ -311,7 +361,7 @@
 			restrict: 'A',
 			link: function ($scope, $element, $attrs) {
 				var opts = $scope.$eval($attrs.localForage);
-				if(angular.isObject(opts) && angular.isDefined(opts.key) && angular.isDefined(opts.storeName)) {
+				if(angular.isObject(opts) && angular.isDefined(opts.key)) {
 					$localForage.bind($scope, opts);
 				} else {
 					$localForage.bind($scope, $attrs.localForage);

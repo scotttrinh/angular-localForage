@@ -34,9 +34,9 @@ describe('Module: LocalForageModule', function () {
 	    expect(typeof myService.driver).toBe('function');
     });
 
-    it('service:set should be defined', function () {
+    it('service:setItem should be defined', function () {
         expect(myService.setItem).toBeDefined();
-	    expect(typeof myService.set).toBe('function');
+	    expect(typeof myService.setItem).toBe('function');
     });
 
     it('service:get should be defined', function () {
@@ -44,9 +44,9 @@ describe('Module: LocalForageModule', function () {
 	    expect(typeof myService.getItem).toBe('function');
     });
 
-    it('service:remove should be defined', function () {
-        expect(myService.remove).toBeDefined();
-	    expect(typeof myService.remove).toBe('function');
+    it('service:removeItem should be defined', function () {
+        expect(myService.removeItem).toBeDefined();
+	    expect(typeof myService.removeItem).toBe('function');
     });
 
     it('service:clear should be defined', function () {

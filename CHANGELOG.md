@@ -1,3 +1,32 @@
+<a name="1.0.0"></a>
+# 1.0.0 (2014-10-17)
+
+## Features
+- You can now use multiple instances of localForage (see the [Readme file](https://github.com/ocombe/angular-localForage/blob/master/README.md) for more info).
+- You can use a `name` option with bind and with the directive to specify which instance to use.
+- Slightly better examples (I could do much better)
+
+## Breaking changes
+- The following deprecated functions have been removed: getDriver, set, get, remove, clearAll, getKeyAt, getLength
+- getKeys is now deprecated, use the function keys instead (following the naming convention from localForage).
+- Because localForage now takes into account the prefix for localStorage, this lib will no longer add its own prefix to localStorage variables.
+  If you want to ensure compability with values stored in localStorage before this release, you need to add `oldPrefix: true` to your provider's configuration:
+  ```js
+  $localForageProvider.config({
+      oldPrefix: true
+  });
+  ```
+  If you don't do that, you won't be able to access those old data, and they will stay in localStorage.
+  This doesn't affect other storages (indexedDB & WebSQL).
+- The method `bind` and the directive have changed: `storeName` has been replaced by `scopeKey` to avoid confusion with the `storeName` from config and to be more self explicit. `key` is now the name of the storage key.
+- The method `unbind` now takes only 2 parameters (scope & key, or scope & config object). `storeName` has also been replaced by `scopeKey`.
+
+## Documentation
+- Better doc on the directive
+- General cleanup
+- Doc for the multiple instances
+
+
 <a name="0.2.10"></a>
 # 0.2.10 (2014-09-08)
 
