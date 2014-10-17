@@ -16,6 +16,7 @@
       oldPrefix: true
   });
   ```
+  
   If you don't do that, you won't be able to access those old data, and they will stay in localStorage.
   This doesn't affect other storages (indexedDB & WebSQL).
 - The method `bind` and the directive have changed: `storeName` has been replaced by `scopeKey` to avoid confusion with the `storeName` from config and to be more self explicit. `key` is now the name of the storage key.
