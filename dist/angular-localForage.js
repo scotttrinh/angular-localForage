@@ -1,10 +1,3 @@
-/**
- * angular-localforage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v1.0.0
- * @link https://github.com/ocombe/angular-localForage
- * @license MIT
- * @author Olivier Combe <olivier.combe@gmail.com>
- */
 (function(window, angular, localforage, undefined) {
 	'use strict';
 
@@ -132,7 +125,27 @@
 				return deferred.promise;
 			};
 
-			// Remove an item from storage
+            // Directly get a value from storage
+            LocalForageInstance.prototype.iterate = function iterate(callback) {
+                // throw error on undefined key
+                if(angular.isUndefined(callback)) {
+                    throw new Error("You must define a callback to iterate");
+                }
+
+                var deferred = $q.defer(),
+                    args = arguments,
+                    self = this;
+
+                self._localforage.iterate(callback).then(function success(item) {
+                    deferred.resolve(item);
+                }, function error(data) {
+                    self.onError(data, args, self.iterate, deferred);
+                });
+
+                return deferred.promise;
+            };
+
+            // Remove an item from storage
 			LocalForageInstance.prototype.removeItem = function removeItem(key) {
 				// throw error on undefined key
 				if(angular.isUndefined(key)) {
