@@ -12,7 +12,7 @@ This angularJS module is a rewrite of [angular-local-storage by grevory](https:/
 - Store your data in the best available storage solution that your browser can offer (IndexedDB / WebSQL or localstorage as a fallback)
 
 - All browsers are supported starting at IE8. For the full list check: [IndexedDB support](http://caniuse.com/#search=indexeddb), [WebSQL support](http://caniuse.com/#search=websql) and [localstorage support](http://caniuse.com/#search=localstorage)
- 
+
 - Everything is async and uses promises
 
 - Use the service or the directive
@@ -59,6 +59,8 @@ angular.module('yourModule', ['LocalForageModule'])
 - `keys()`: returns all the keys used for storage in your application (async, promise)
 
 - `length()`: returns the number of items stored (async, promise)
+
+- `search(filter)`: returns all the items for which filter returns true (filter is a function taking key,value as params) (async, promise)
 
 - `bind($scope, key/params object)`: lets you directly bind a LocalForage value to a $scope variable (async, promise)
 ```js
