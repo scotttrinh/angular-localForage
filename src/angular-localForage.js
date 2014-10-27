@@ -125,6 +125,55 @@
 				return deferred.promise;
 			};
 
+
+			// Get all the values for which the filter function returns true
+			// filter should be a function that takes two parameters key, value and returns a boolean
+			// return a list of item
+			LocalForageInstance.prototype.search = function search(filter) {
+				// throw error on undefined key
+				if(angular.isUndefined(filter)) {
+					throw new Error("You must define a filter");
+				}
+				if(!angular.isFunction(filter)) {
+					throw new Error("filter must be a function");
+				}
+				var deferred = $q.defer(),
+					args = arguments,
+					self = this;
+
+				self._localforage.keys().then(function success(keyList) {
+					var promises = [],
+						datas = [],
+						ret = [];
+					angular.forEach(keyList, function(key){
+						var d = $q.defer()
+						self._localforage.getItem(self.prefix() + key)
+						.then(function success(item) {
+							datas.push({'key': key, 'value': item});
+							d.resolve();
+						},function failure(err){
+							self.onError(data, args, self.search, deferred);
+						});
+						promises.push(d.promise);
+					});
+					$q.all(promises).then(function(){
+						angular.forEach(datas, function(data){
+							var key = data['key'],
+								value = data['value'];
+							if(filter(key, value))
+								ret.push(value);
+						});
+						deferred.resolve(ret);
+					},function(err){
+						self.onError(data, args, self.search, deferred);
+					});
+				}, function error(data) {
+					self.onError(data, args, self.search, deferred);
+					deferred.reject(data)
+				});
+				return deferred.promise;
+			};
+
 			// Remove an item from storage
 			LocalForageInstance.prototype.removeItem = function removeItem(key) {
 				// throw error on undefined key
