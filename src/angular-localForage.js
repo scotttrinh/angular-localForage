@@ -1,4 +1,16 @@
-(function(window, angular, localforage, undefined) {
+(function(root, factory) {
+	'use strict';
+
+	if(typeof define === 'function' && define.amd) {                    // AMD
+		define(['localforage'], function(localforage) {
+			factory(root.angular, localforage);
+		});
+	} else if(typeof exports === 'object') {
+		module.exports = factory(root.angular, require('localforage')); // Node
+	} else {
+		factory(root.angular, root.localforage);                        // Browser
+	}
+})(this, function(angular, localforage, undefined) {
 	'use strict';
 
 	var angularLocalForage = angular.module('LocalForageModule', ['ng']);
@@ -418,4 +430,5 @@
 			}
 		}
 	}]);
-})(window, window.angular, window.localforage);
+});
+
