@@ -67,7 +67,6 @@ module.exports = function(config) {
 module.exports.conf = {
 	frameworks: ['jasmine'],
 	files: [
-		'node_modules/jasmine-as-promised/src/jasmine-as-promised.js',
 		'bower_components/angular/angular.js',
 		'bower_components/angular-mocks/angular-mocks.js',
 		'bower_components/localforage/dist/localforage.js',
