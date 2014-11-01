@@ -1,10 +1,26 @@
+<a name="1.1.0"></a>
+# 1.1.0 (2014-11-01)
+
+
+## Features
+
+- Added search functionality
+ ([220110bd](https://github.com/ocombe/angular-localForage/commit/220110bd8832cf9a1b4112a17f62d15f2a0539ab))
+- Script loading for require.js
+ ([56647fdf](https://github.com/ocombe/angular-localForage/commit/56647fdf546c88a238e1f004ea182e6bad69d92e),
+ [#26](https://github.com/ocombe/angular-localForage/issues/26))
+- Update to localforage 1.1.1
+
+
 <a name="1.0.0"></a>
 # 1.0.0 (2014-10-17)
+
 
 ## Features
 - You can now use multiple instances of localForage (see the [Readme file](https://github.com/ocombe/angular-localForage/blob/master/README.md) for more info).
 - You can use a `name` option with bind and with the directive to specify which instance to use.
 - Slightly better examples (I could do much better)
+
 
 ## Breaking changes
 - The following deprecated functions have been removed: getDriver, set, get, remove, clearAll, getKeyAt, getLength
@@ -21,6 +37,7 @@
   This doesn't affect other storages (indexedDB & WebSQL).
 - The method `bind` and the directive have changed: `storeName` has been replaced by `scopeKey` to avoid confusion with the `storeName` from config and to be more self explicit. `key` is now the name of the storage key.
 - The method `unbind` now takes only 2 parameters (scope & key, or scope & config object). `storeName` has also been replaced by `scopeKey`.
+
 
 ## Documentation
 - Better doc on the directive

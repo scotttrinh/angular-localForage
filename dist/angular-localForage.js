@@ -1,11 +1,23 @@
 /**
  * angular-localforage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v1.0.0
+ * @version v1.1.0
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
  * @author Olivier Combe <olivier.combe@gmail.com>
  */
-(function(window, angular, localforage, undefined) {
+(function(root, factory) {
+	'use strict';
+
+	if(typeof define === 'function' && define.amd) {                    // AMD
+		define(['localforage'], function(localforage) {
+			factory(root.angular, localforage);
+		});
+	} else if(typeof exports === 'object') {
+		module.exports = factory(root.angular, require('localforage')); // Node
+	} else {
+		factory(root.angular, root.localforage);                        // Browser
+	}
+})(this, function(angular, localforage, undefined) {
 	'use strict';
 
 	var angularLocalForage = angular.module('LocalForageModule', ['ng']);
@@ -128,6 +140,55 @@
 					deferred.resolve(item);
 				}, function error(data) {
 					self.onError(data, args, self.getItem, deferred);
+				});
+				return deferred.promise;
+			};
+
+
+			// Get all the values for which the filter function returns true
+			// filter should be a function that takes two parameters key, value and returns a boolean
+			// return a list of item
+			LocalForageInstance.prototype.search = function search(filter) {
+				// throw error on undefined key
+				if(angular.isUndefined(filter)) {
+					throw new Error("You must define a filter");
+				}
+				if(!angular.isFunction(filter)) {
+					throw new Error("filter must be a function");
+				}
+				var deferred = $q.defer(),
+					args = arguments,
+					self = this;
+
+				self._localforage.keys().then(function success(keyList) {
+					var promises = [],
+						datas = [],
+						ret = [];
+					angular.forEach(keyList, function(key){
+						var d = $q.defer()
+						self._localforage.getItem(self.prefix() + key)
+						.then(function success(item) {
+							datas.push({'key': key, 'value': item});
+							d.resolve();
+						},function failure(err){
+							self.onError(data, args, self.search, deferred);
+						});
+						promises.push(d.promise);
+					});
+					$q.all(promises).then(function(){
+						angular.forEach(datas, function(data){
+							var key = data['key'],
+								value = data['value'];
+							if(filter(key, value))
+								ret.push(value);
+						});
+						deferred.resolve(ret);
+					},function(err){
+						self.onError(data, args, self.search, deferred);
+					});
+				}, function error(data) {
+					self.onError(data, args, self.search, deferred);
+					deferred.reject(data)
 				});
 				return deferred.promise;
 			};
@@ -376,4 +437,5 @@
 			}
 		}
 	}]);
-})(window, window.angular, window.localforage);
+});
+
