@@ -6,7 +6,8 @@
 			factory(root.angular, localforage);
 		});
 	} else if(typeof exports === 'object') {
-		module.exports = factory(root.angular, require('localforage')); // Node
+		var angular = root.angular || (window && window.angular);
+		module.exports = factory(angular, require('localforage')); // Node/Browserify
 	} else {
 		factory(root.angular, root.localforage);                        // Browser
 	}
