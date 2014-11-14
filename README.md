@@ -61,6 +61,13 @@ angular.module('yourModule', ['LocalForageModule'])
 - `length()`: returns the number of items stored (async, promise)
 
 - `search(filter)`: returns all the items for which filter returns true (filter is a function taking key,value as params) (async, promise)
+```js
+$localForage.search(function(key, value) {
+    return "myKey" == key && "something" == value;
+}).then(function(data) {
+    // do something
+});
+```
 
 - `bind($scope, key/params object)`: lets you directly bind a LocalForage value to a $scope variable (async, promise)
 ```js
