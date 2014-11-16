@@ -20,7 +20,3 @@ deploy:
     repo: ocombe/angular-localForage
 addons:
   sauce_connect: true
-env:
-  global:
-  - secure: JAQjIAmYeU/Ynyjw5kkLuwEPZvzN21AxlXbre2TtXkstc36KNQnVyYN0jXtF2FfTPunPYKtTWuU7UpF/kR468zuJdJo9pLe73wOvpNTwmQeH71AO8EKAcLy42bsWzsFPTMQeg3g5S9oZ8LZXLpOAz9uswFSPlVWwlK95inyixKQ=
-  - secure: BBSWQQkLJpuWEBwTl/M9l7xzfUAToIpB1xN7V2Eo+fzTRWZFONA0uBlLy0FddEXyE/DqOjeSIYAuy55hMYvseM0rPMueVlGw6R01yxEbzAh9hKrLQn9IGcrfOkYACQXQKt8QsBx6zqVs7/YClc+tuGU4jSNqxUpzmd53e9ildvQ=
