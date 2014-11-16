@@ -97,4 +97,4 @@ module.exports.conf = {
 	reporters: ['progress', 'saucelabs'],
 	port: 9876,
 	colors: true
-}
+};
