@@ -71,10 +71,11 @@ var makeChangelog = function(newVer) {
 		stream = streamqueue({ objectMode: true }),
 		exec = require('gulp-exec'),
 		concat = require('gulp-concat'),
-		rimraf = require('gulp-rimraf');
+		del = require('del'),
+		vinylPaths = require('vinyl-paths');
 
 	stream.queue(gulp.src('').pipe(exec('node ./changelog.js ' + newVer, { pipeStdout: true })));
-	stream.queue(gulp.src('CHANGELOG.md').pipe(rimraf()));
+	stream.queue(gulp.src('CHANGELOG.md').pipe(vinylPaths(del)));
 
 	return stream.done()
 		.pipe(concat('CHANGELOG.md'))
