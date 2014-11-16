@@ -145,7 +145,6 @@
 				return deferred.promise;
 			};
 
-
 			// Get all the values for which the filter function returns true
 			// filter should be a function that takes two parameters key, value and returns a boolean
 			// return a list of item
@@ -194,7 +193,27 @@
 				return deferred.promise;
 			};
 
-			// Remove an item from storage
+            // Directly get a value from storage
+            LocalForageInstance.prototype.iterate = function iterate(callback) {
+                // throw error on undefined key
+                if(angular.isUndefined(callback)) {
+                    throw new Error("You must define a callback to iterate");
+                }
+
+                var deferred = $q.defer(),
+                    args = arguments,
+                    self = this;
+
+                self._localforage.iterate(callback).then(function success(item) {
+                    deferred.resolve(item);
+                }, function error(data) {
+                    self.onError(data, args, self.iterate, deferred);
+                });
+
+                return deferred.promise;
+            };
+
+            // Remove an item from storage
 			LocalForageInstance.prototype.removeItem = function removeItem(key) {
 				// throw error on undefined key
 				if(angular.isUndefined(key)) {
