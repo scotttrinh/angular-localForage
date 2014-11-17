@@ -60,12 +60,18 @@ angular.module('yourModule', ['LocalForageModule'])
 
 - `length()`: returns the number of items stored (async, promise)
 
-- `search(filter)`: returns all the items for which filter returns true (filter is a function taking key,value as params) (async, promise)
+- `iterate(iteratorCallback)`: Iterate over all value/key pairs in datastore. (async, promise)
+
+Iterate supports early exit by returning non `undefined` value inside `iteratorCallback` callback.
+Resulting value will be passed to the promise as the result of iteration.
+You can use this to make a search in your data:
 ```js
-$localForage.search(function(key, value) {
-    return "myKey" == key && "something" == value;
+$localForage.iterate(function(value, key) {
+    if(angular.isInt(value) && value > 10) {
+        return key;
+    }
 }).then(function(data) {
-    // do something
+    // data is the key of the value > 10
 });
 ```
 
