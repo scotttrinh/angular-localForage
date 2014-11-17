@@ -1,3 +1,28 @@
+<a name="1.2.0"></a>
+# 1.2.0 (2014-11-18)
+
+
+## Features
+
+- new method `pull`
+ ([0a1cf013](https://github.com/ocombe/angular-localForage/commit/0a1cf0134342a243bbe681e14b01ccebcd252d17),
+ [#38](https://github.com/ocombe/angular-localForage/issues/38))
+- you can now get, set and remove multiple items at the same time
+ ([8b304633](https://github.com/ocombe/angular-localForage/commit/8b304633b77b3ea4646cbba4c8fd149d75c07dbb),
+ [#35](https://github.com/ocombe/angular-localForage/issues/35))
+- new method `iterate`
+ ([3e942732](https://github.com/ocombe/angular-localForage/commit/3e94273240fc5f646510957652a8f526e7904ec9),
+ [#42](https://github.com/ocombe/angular-localForage/issues/42))
+
+
+## Breaking Changes
+
+- due to [3e942732](https://github.com/ocombe/angular-localForage/commit/3e94273240fc5f646510957652a8f526e7904ec9),
+  the method `search` has been removed and replaced with `iterate` that can potentially do the same but is based on the localForage function `iterate` and is way more optimised.
+
+Fixes #42
+
+
 <a name="1.1.0"></a>
 # 1.1.0 (2014-11-01)
 
