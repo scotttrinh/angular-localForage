@@ -235,6 +235,28 @@
         }
       };
 
+      // Get an item and removes it from storage
+      LocalForageInstance.prototype.pull = function pull(key) {
+        // throw error on undefined key
+        if(angular.isUndefined(key)) {
+          throw new Error("You must define a key to pull");
+        }
+
+        var self = this,
+          deferred = $q.defer(),
+          onError = function error(err) {
+            deferred.reject(err);
+          };
+
+        self.getItem(key).then(function success(value) {
+          self.removeItem(key).then(function success() {
+            deferred.resolve(value);
+          }, onError);
+        }, onError);
+
+        return deferred.promise;
+      };
+
       // Remove all data for this app from storage
       LocalForageInstance.prototype.clear = function clear() {
         var deferred = $q.defer(),

@@ -41,27 +41,27 @@ describe('Module: LocalForageModule', function() {
     expect($localForage).toBeDefined();
   });
 
-  it('service:setDriver should be defined', function() {
+  it('setDriver should be defined', function() {
     expect($localForage.setDriver).toBeDefined();
     expect(typeof $localForage.setDriver).toBe('function');
   });
 
-  it('service:driver should be defined', function() {
+  it('driver should be defined', function() {
     expect($localForage.driver).toBeDefined();
     expect(typeof $localForage.driver).toBe('function');
   });
 
-  it('service:setItem should be defined', function() {
+  it('setItem should be defined', function() {
     expect($localForage.setItem).toBeDefined();
     expect(typeof $localForage.setItem).toBe('function');
   });
 
-  it('service:getItem should be defined', function() {
+  it('getItem should be defined', function() {
     expect($localForage.getItem).toBeDefined();
     expect(typeof $localForage.getItem).toBe('function');
   });
 
-  it('service: setItem and getItem should work', function(done) {
+  it(' setItem and getItem should work', function(done) {
     var interval = triggerDigests();
 
     $localForage.setItem('myName', 'Olivier Combe').then(function(data) {
@@ -76,7 +76,7 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
-  it('service: setItem and getItem should work with an array of keys', function(done) {
+  it(' setItem and getItem should work with an array of keys', function(done) {
     var interval = triggerDigests(),
       values = ['Olivier Combe', 'AngularJs', 'Open Source'];
 
@@ -93,12 +93,12 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
-  it('service:iterate should be defined', function() {
+  it('iterate should be defined', function() {
     expect($localForage.iterate).toBeDefined();
     expect(typeof $localForage.iterate).toBe('function');
   });
 
-  describe('service:removeItem', function() {
+  describe('removeItem', function() {
     var interval;
 
     beforeEach(function(done) {
@@ -137,38 +137,81 @@ describe('Module: LocalForageModule', function() {
 
       }, done);
     });
-  })
+  });
 
-  it('service:clear should be defined', function() {
+  describe('pull', function() {
+    var interval;
+
+    beforeEach(function(done) {
+      interval = triggerDigests();
+      $localForage.setItem(['myName', 'myPassion', 'myHobbie'], ['Olivier Combe', 'AngularJs', 'Open Source']).then(done, done);
+    });
+
+    it('should be defined', function() {
+      expect($localForage.pull).toBeDefined();
+      expect(typeof $localForage.pull).toBe('function');
+      stopDigests(interval);
+    });
+
+    it('should work', function(done) {
+      $localForage.pull('myName').then(function(data) {
+        expect(data).toEqual('Olivier Combe');
+
+        $localForage.getItem('myName').then(function(data) {
+          stopDigests(interval);
+          expect(data).toBeUndefined();
+          done();
+        }, done);
+
+      }, done);
+    });
+
+    it('should work with an array of keys', function(done) {
+      $localForage.pull(['myName', 'myPassion']).then(function(data) {
+        expect(data).toEqual(['Olivier Combe', 'AngularJs']);
+
+        $localForage.getItem(['myName', 'myPassion', 'myHobbie']).then(function(data) {
+          stopDigests(interval);
+          expect(data[0]).toBeUndefined();
+          expect(data[1]).toBeUndefined();
+          expect(data[2]).toEqual('Open Source');
+          done();
+        }, done);
+
+      }, done);
+    });
+  });
+
+  it('clear should be defined', function() {
     expect($localForage.clear).toBeDefined();
     expect(typeof $localForage.clear).toBe('function');
   });
 
-  it('service:clear should works', function() {
+  it('clear should works', function() {
     //todo
   });
 
-  it('service:key should be defined', function() {
+  it('key should be defined', function() {
     expect($localForage.key).toBeDefined();
     expect(typeof $localForage.key).toBe('function');
   });
 
-  it('service:keys should be defined', function() {
+  it('keys should be defined', function() {
     expect($localForage.keys).toBeDefined();
     expect(typeof $localForage.keys).toBe('function');
   });
 
-  it('service:length should be defined', function() {
+  it('length should be defined', function() {
     expect($localForage.length).toBeDefined();
     expect(typeof $localForage.length).toBe('function');
   });
 
-  it('service:bind should be defined', function() {
+  it('bind should be defined', function() {
     expect($localForage.bind).toBeDefined();
     expect(typeof $localForage.bind).toBe('function');
   });
 
-  it('service:unbind should be defined', function() {
+  it('unbind should be defined', function() {
     expect($localForage.unbind).toBeDefined();
     expect(typeof $localForage.unbind).toBe('function');
   });
@@ -178,7 +221,7 @@ describe('Module: LocalForageModule', function() {
   });
 
   // using default driver
-  it('service:setItem and getItem with IndexedDB or webSQL should work', function(done) {
+  it('setItem and getItem with IndexedDB or webSQL should work', function(done) {
     var interval = triggerDigests();
 
     $localForage.setItem('myName', 'Olivier Combe').then(function(d) {
@@ -193,7 +236,7 @@ describe('Module: LocalForageModule', function() {
   });
 
   // using localstorage
-  it('service:setItem and getItem with localStorageWrapper should work', function(done) {
+  it('setItem and getItem with localStorageWrapper should work', function(done) {
     var interval = triggerDigests();
 
     $localForage.setDriver('localStorageWrapper').then(function() {
@@ -207,7 +250,7 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
-  it('service:setItem with IndexedDB or webSQL should strip $$hashKey from arrays used in ngRepeat', function(done) {
+  it('setItem with IndexedDB or webSQL should strip $$hashKey from arrays used in ngRepeat', function(done) {
     var interval = triggerDigests();
 
     $localForage.setItem('myArray', [{
@@ -225,7 +268,7 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
-  it('service:setItem with localStorageWrapper should strip $$hashKey from arrays used in ngRepeat', function(done) {
+  it('setItem with localStorageWrapper should strip $$hashKey from arrays used in ngRepeat', function(done) {
     var interval = triggerDigests();
 
     $localForage.setDriver('localStorageWrapper').then(function() {
@@ -245,19 +288,19 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
-  it("service: setItem should throw an error if keys are an array but values aren't", function() {
+  it(" setItem should throw an error if keys are an array but values aren't", function() {
     expect(function() {
       $localForage.setItem(['myName', 'myPassion', 'myHobbie'], 'value');
     }).toThrowError('If you set an array of keys, the values should be an array too');
   });
 
-  it("service: setItem should throw an error if key is undefined", function() {
+  it(" setItem should throw an error if key is undefined", function() {
     expect(function() {
       $localForage.setItem();
     }).toThrowError('You must define a key to set');
   });
 
-  describe("service:iterate", function() {
+  describe("iterate", function() {
     var interval;
 
     beforeEach(function(done) {

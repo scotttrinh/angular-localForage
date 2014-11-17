@@ -52,6 +52,8 @@ angular.module('yourModule', ['LocalForageModule'])
 
 - `removeItem(key/Array<key>)`: removes stored data (async, promise)
 
+- `pull(key/Array<key>)`: removes stored data and returns it (it's like doing getItem followed by removeItem) (async, promise)
+
 - `clear()`: removed all stored data for your application based on the app prefix (async, promise)
 
 - `key(n)`: retrieves the key at n position in storage. It doesn't take the prefix into account if you use localStorage (async, promise)
