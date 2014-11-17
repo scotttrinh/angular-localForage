@@ -10,6 +10,9 @@ describe('Module: LocalForageModule', function() {
       return setInterval(function() {
         $rootScope.$digest();
       }, 10)
+    },
+    stopDigests = function(interval) {
+      window.clearInterval(interval);
     };
 
   angular.module('app', ['LocalForageModule']);
@@ -29,7 +32,7 @@ describe('Module: LocalForageModule', function() {
       $localForage = $localForage.createInstance({
         name: ++instanceVersion
       });
-      window.clearInterval(interval);
+      stopDigests(interval);
       done();
     }, done);
   });
@@ -53,9 +56,41 @@ describe('Module: LocalForageModule', function() {
     expect(typeof $localForage.setItem).toBe('function');
   });
 
-  it('service:get should be defined', function() {
+  it('service:getItem should be defined', function() {
     expect($localForage.getItem).toBeDefined();
     expect(typeof $localForage.getItem).toBe('function');
+  });
+
+  it('service: setItem and getItem should work', function(done) {
+    var interval = triggerDigests();
+
+    $localForage.setItem('myName', 'Olivier Combe').then(function(data) {
+      expect(data).toEqual('Olivier Combe');
+
+      $localForage.getItem('myName').then(function(data) {
+        stopDigests(interval);
+        expect(data).toEqual('Olivier Combe');
+        done();
+      }, done);
+
+    }, done);
+  });
+
+  it('service: setItem and getItem should work with an array of keys', function(done) {
+    var interval = triggerDigests(),
+      values = ['Olivier Combe', 'AngularJs', 'Open Source'];
+
+    $localForage.setItem(['myName', 'myPassion', 'myHobbie'], values).then(function(data) {
+      expect(data).toEqual(values);
+
+      $localForage.getItem(['myHobbie', 'myName']).then(function(data) {
+        stopDigests(interval);
+        expect(data.length).toEqual(2);
+        expect(data).toEqual(['Open Source', 'Olivier Combe']);
+        done();
+      }, done);
+
+    }, done);
   });
 
   it('service:iterate should be defined', function() {
@@ -63,10 +98,46 @@ describe('Module: LocalForageModule', function() {
     expect(typeof $localForage.iterate).toBe('function');
   });
 
-  it('service:removeItem should be defined', function() {
-    expect($localForage.removeItem).toBeDefined();
-    expect(typeof $localForage.removeItem).toBe('function');
-  });
+  describe('service:removeItem', function() {
+    var interval;
+
+    beforeEach(function(done) {
+      interval = triggerDigests();
+      $localForage.setItem(['myName', 'myPassion', 'myHobbie'], ['Olivier Combe', 'AngularJs', 'Open Source']).then(done, done);
+    });
+
+    it('should be defined', function() {
+      expect($localForage.removeItem).toBeDefined();
+      expect(typeof $localForage.removeItem).toBe('function');
+      stopDigests(interval);
+    });
+
+    it('should work', function(done) {
+      $localForage.removeItem('myName').then(function() {
+
+        $localForage.getItem('myName').then(function(data) {
+          stopDigests(interval);
+          expect(data).toBeUndefined();
+          done();
+        }, done);
+
+      }, done);
+    });
+
+    it('should work with an array of keys', function(done) {
+      $localForage.removeItem(['myName', 'myPassion']).then(function() {
+
+        $localForage.getItem(['myName', 'myPassion', 'myHobbie']).then(function(data) {
+          stopDigests(interval);
+          expect(data[0]).toBeUndefined();
+          expect(data[1]).toBeUndefined();
+          expect(data[2]).toEqual('Open Source');
+          done();
+        }, done);
+
+      }, done);
+    });
+  })
 
   it('service:clear should be defined', function() {
     expect($localForage.clear).toBeDefined();
@@ -113,11 +184,11 @@ describe('Module: LocalForageModule', function() {
     $localForage.setItem('myName', 'Olivier Combe').then(function(d) {
 
       $localForage.getItem('myName').then(function(data) {
-        window.clearInterval(interval);
+        stopDigests(interval);
         expect(data).toEqual('Olivier Combe');
         done();
       }, done);
-      
+
     }, done);
   });
 
@@ -128,7 +199,7 @@ describe('Module: LocalForageModule', function() {
     $localForage.setDriver('localStorageWrapper').then(function() {
       $localForage.setItem('myName', 'Olivier Combe').then(function(d) {
         $localForage.getItem('myName').then(function(data) {
-          window.clearInterval(interval);
+          stopDigests(interval);
           expect(data).toEqual('Olivier Combe');
           done();
         }, done);
@@ -145,7 +216,7 @@ describe('Module: LocalForageModule', function() {
     }]).then(function(d) {
 
       $localForage.getItem('myArray').then(function(data) {
-        window.clearInterval(interval);
+        stopDigests(interval);
         expect(data.length).toEqual(1);
         expect(data[0].name).toEqual('Olivier Combe');
         done();
@@ -164,7 +235,7 @@ describe('Module: LocalForageModule', function() {
       }]).then(function(d) {
 
         $localForage.getItem('myArray').then(function(data) {
-          window.clearInterval(interval);
+          stopDigests(interval);
           expect(data.length).toEqual(1);
           expect(data[0].name).toEqual('Olivier Combe');
           done();
@@ -174,45 +245,49 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
+  it("service: setItem should throw an error if keys are an array but values aren't", function() {
+    expect(function() {
+      $localForage.setItem(['myName', 'myPassion', 'myHobbie'], 'value');
+    }).toThrowError('If you set an array of keys, the values should be an array too');
+  });
+
+  it("service: setItem should throw an error if key is undefined", function() {
+    expect(function() {
+      $localForage.setItem();
+    }).toThrowError('You must define a key to set');
+  });
+
   describe("service:iterate", function() {
     var interval;
 
     beforeEach(function(done) {
       interval = triggerDigests();
-      $localForage.setItem('myName', 'Olivier Combe').then(function() {
-        $localForage.setItem('myPassion', 'AngularJs').then(function() {
-          $localForage.setItem('myHobbie', 'Open Source').then(done, done);
-        }, done);
+      $localForage.setItem(['myName', 'myPassion', 'myHobbie'], ['Olivier Combe', 'AngularJs', 'Open Source']).then(done, done);
+    });
+
+    it('should work', function(done) {
+      var res = [];
+
+      $localForage.iterate(function(value, key) {
+        res.push(key);
+      }).then(function(data) {
+        stopDigests(interval);
+        expect(res.length).toEqual(3);
+        done();
       }, done);
     });
 
-    describe("", function() {
-      it('should work', function(done) {
-        var res = [];
-
-        $localForage.iterate(function(value, key) {
-          res.push(key);
-        }).then(function(data) {
-          window.clearInterval(interval);
-          expect(res.length).toEqual(3);
-          done();
-        }, done);
-      });
-    });
-
-    describe("", function() {
-      it('key/value filter should work', function(done) {
-        //test key filter
-        $localForage.iterate(function(value, key) {
-          if(key == 'myPassion') {
-            return value;
-          }
-        }).then(function(data) {
-          window.clearInterval(interval);
-          expect(data).toEqual('AngularJs');
-          done();
-        }, done);
-      });
+    it('key/value filter should work', function(done) {
+      //test key filter
+      $localForage.iterate(function(value, key) {
+        if(key == 'myPassion') {
+          return value;
+        }
+      }).then(function(data) {
+        stopDigests(interval);
+        expect(data).toEqual('AngularJs');
+        done();
+      }, done);
     });
   });
 });

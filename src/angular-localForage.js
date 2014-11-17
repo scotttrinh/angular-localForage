@@ -97,26 +97,44 @@
           throw new Error("You must define a key to set");
         }
 
-        var deferred = $q.defer(),
-          args = arguments,
-          localCopy = angular.copy(value),
-          self = this;
+        var self = this;
 
-        //avoid $promises attributes from value objects, if present.
-        if(angular.isObject(localCopy) && angular.isDefined(localCopy.$promise)) {
-          delete localCopy.$promise; //delete attribut from object structure.
-        }
-
-        self._localforage.setItem(self.prefix() + key, localCopy).then(function success() {
-          if(notify.setItem) {
-            $rootScope.$broadcast('LocalForageModule.setItem', {key: key, newvalue: localCopy, driver: self.driver()});
+        if(angular.isArray(key)) {
+          if(!angular.isArray(value)) {
+            throw new Error('If you set an array of keys, the values should be an array too');
           }
-          deferred.resolve(localCopy);
-        }, function error(data) {
-          self.onError(data, args, self.setItem, deferred);
-        });
 
-        return deferred.promise;
+          var promises = [];
+          angular.forEach(key, function(k, index) {
+            promises.push(self.setItem(k, value[index]))
+          });
+
+          return $q.all(promises);
+        } else {
+          var deferred = $q.defer(),
+            args = arguments,
+            localCopy = angular.copy(value);
+
+          //avoid $promises attributes from value objects, if present.
+          if(angular.isObject(localCopy) && angular.isDefined(localCopy.$promise)) {
+            delete localCopy.$promise; //delete attribut from object structure.
+          }
+
+          self._localforage.setItem(self.prefix() + key, localCopy).then(function success() {
+            if(notify.setItem) {
+              $rootScope.$broadcast('LocalForageModule.setItem', {
+                key: key,
+                newvalue: localCopy,
+                driver: self.driver()
+              });
+            }
+            deferred.resolve(localCopy);
+          }, function error(data) {
+            self.onError(data, args, self.setItem, deferred);
+          });
+
+          return deferred.promise;
+        }
       };
 
       // Directly get a value from storage
@@ -128,13 +146,32 @@
 
         var deferred = $q.defer(),
           args = arguments,
-          self = this;
+          self = this,
+          promise;
 
-        self._localforage.getItem(self.prefix() + key).then(function success(item) {
-          deferred.resolve(item);
+        if(angular.isArray(key)) {
+          var res = [],
+            found = 0;
+          promise = self._localforage.iterate(function(value, k) {
+            var index = key.indexOf(self.prefix() + k);
+            if(index > -1) {
+              res[index] = value;
+              found++;
+            }
+            if(found === key.length) {
+              return res;
+            }
+          });
+        } else {
+          promise = self._localforage.getItem(self.prefix() + key);
+        }
+
+        promise.then(function success(item) {
+          deferred.resolve(item || res);
         }, function error(data) {
           self.onError(data, args, self.getItem, deferred);
         });
+
         return deferred.promise;
       };
 
@@ -165,21 +202,28 @@
           throw new Error("You must define a key to remove");
         }
 
-        var deferred = $q.defer(),
-          args = arguments,
-          self = this;
+        var self = this;
 
-        self._localforage.removeItem(self.prefix() + key).then(function success() {
-          deferred.resolve();
-        }, function error(data) {
-          self.onError(data, args, self.removeItem, deferred);
-        });
-
-        if(notify.removeItem) {
-          return deferred.promise.then(function(value) {
-            $rootScope.$broadcast('LocalForageModule.removeItem', {key: key, driver: self.driver()});
+        if(angular.isArray(key)) {
+          var promises = [];
+          angular.forEach(key, function(k, index) {
+            promises.push(self.removeItem(k));
           });
+
+          return $q.all(promises);
         } else {
+          var deferred = $q.defer(),
+            args = arguments;
+
+          self._localforage.removeItem(self.prefix() + key).then(function success() {
+            if(notify.removeItem) {
+              $rootScope.$broadcast('LocalForageModule.removeItem', {key: key, driver: self.driver()});
+            }
+            deferred.resolve();
+          }, function error(data) {
+            self.onError(data, args, self.removeItem, deferred);
+          });
+
           return deferred.promise;
         }
       };

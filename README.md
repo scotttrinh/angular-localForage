@@ -46,11 +46,11 @@ angular.module('yourModule', ['LocalForageModule'])
 
 - `driver()`: returns the current localForage driver (sync)
 
-- `setItem(key, value)`: stores data (async, promise)
+- `setItem(key/Array<key>, value/Array<value>)`: stores data (async, promise)
 
-- `getItem(key)`: retrieves stored data (async, promise)
+- `getItem(key/Array<key>)`: retrieves stored data (async, promise)
 
-- `removeItem(key)`: removes stored data (async, promise)
+- `removeItem(key/Array<key>)`: removes stored data (async, promise)
 
 - `clear()`: removed all stored data for your application based on the app prefix (async, promise)
 
