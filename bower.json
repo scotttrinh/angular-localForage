@@ -29,7 +29,8 @@
     "package.json",
     "src",
     "validate-commit-msg.js",
-    "changelog.js"
+    "changelog.js",
+    "example"
   ],
   "devDependencies": {
     "angular-mocks": "1.2.x - 1.3.x"
