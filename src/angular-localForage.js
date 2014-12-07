@@ -137,6 +137,28 @@
         }
       };
 
+      // Directly adds a value to storage
+      LocalForageInstance.prototype.setItems = function setItem(items, valueFn, keyFn) {
+        var self = this;
+
+        var deferred = $q.defer(), args = arguments;
+
+        self._localforage.setItems(items, valueFn, keyFn).then(function success() {
+          if(notify.setItems) {
+            $rootScope.$broadcast('LocalForageModule.setItems', {
+              key: key,
+              newvalue: localCopy,
+              driver: self.driver()
+            });
+          }
+          deferred.resolve(items);
+        }, function error(data) {
+          self.onError(data, args, self.setItem, deferred);
+        });
+
+        return deferred.promise;
+      };
+
       // Directly get a value from storage
       LocalForageInstance.prototype.getItem = function getItem(key) {
         // throw error on undefined key
@@ -174,6 +196,7 @@
 
         return deferred.promise;
       };
+
 
       // Iterate over all the values in storage
       LocalForageInstance.prototype.iterate = function iterate(callback) {
