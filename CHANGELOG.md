@@ -1,3 +1,13 @@
+<a name="1.2.2"></a>
+# 1.2.2 (2014-12-08)
+
+
+## Bug Fixes
+
+- Blob fix for IE9
+ ([f3774641](https://github.com/ocombe/angular-localForage/commit/f3774641605efcb2cd3ad1e615dc4d816a530f57))
+
+
 <a name="1.2.1"></a>
 # 1.2.1 (2014-12-08)
 
