@@ -289,7 +289,7 @@ describe('Module: LocalForageModule', function() {
   });
 
   it('setItem should be able to store a Blob', function(done) {
-    if(typeof Bldob !== 'undefined') {
+    if(typeof Blob !== 'undefined') {
       var interval = triggerDigests();
 
       var aFileParts = ["<a id=\"a\"><b id=\"b\">hey!<\/b><\/a>"];
