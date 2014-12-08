@@ -22,7 +22,7 @@ describe('Module: LocalForageModule', function() {
     inject(function(_$rootScope_, _$localForage_) {
       $rootScope = _$rootScope_;
       $localForage = _$localForage_;
-    })
+    });
   });
 
   afterEach(function(done) {
@@ -61,7 +61,7 @@ describe('Module: LocalForageModule', function() {
     expect(typeof $localForage.getItem).toBe('function');
   });
 
-  it(' setItem and getItem should work', function(done) {
+  it('setItem and getItem should work', function(done) {
     var interval = triggerDigests();
 
     $localForage.setItem('myName', 'Olivier Combe').then(function(data) {
@@ -76,7 +76,7 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
-  it(' setItem and getItem should work with an array of keys', function(done) {
+  it('setItem and getItem should work with an array of keys', function(done) {
     var interval = triggerDigests(),
       values = ['Olivier Combe', 'AngularJs', 'Open Source'];
 
