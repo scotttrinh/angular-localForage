@@ -288,6 +288,19 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
+  it('setItem should be able to store a Blob', function(done) {
+    var interval = triggerDigests();
+
+    var aFileParts = ["<a id=\"a\"><b id=\"b\">hey!<\/b><\/a>"];
+    var oMyBlob = new Blob(aFileParts, { "type" : "text\/xml" }); // the blob
+
+    $localForage.setItem('myBlob', oMyBlob).then(function(data) {
+      stopDigests(interval);
+      expect(data instanceof Blob).toBe(true);
+      done();
+    }, done);
+  });
+
   it(" setItem should throw an error if keys are an array but values aren't", function() {
     expect(function() {
       $localForage.setItem(['myName', 'myPassion', 'myHobbie'], 'value');
