@@ -1,6 +1,6 @@
 /**
  * angular-localforage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v1.2.0
+ * @version v1.2.1
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
  * @author Olivier Combe <olivier.combe@gmail.com>
@@ -120,7 +120,7 @@
         } else {
           var deferred = $q.defer(),
             args = arguments,
-            localCopy = angular.copy(value);
+            localCopy = angular.isDefined(Blob) && value instanceof Blob ? value : angular.copy(value);
 
           //avoid $promises attributes from value objects, if present.
           if(angular.isObject(localCopy) && angular.isDefined(localCopy.$promise)) {

@@ -1,3 +1,14 @@
+<a name="1.2.1"></a>
+# 1.2.1 (2014-12-08)
+
+
+## Bug Fixes
+
+- don't use angular.copy on Blobs
+ ([ff575a1b](https://github.com/ocombe/angular-localForage/commit/ff575a1bdbd076c42fa64d5f5824f4967990f5b5),
+ [#44](https://github.com/ocombe/angular-localForage/issues/44))
+
+
 <a name="1.2.0"></a>
 # 1.2.0 (2014-11-18)
 
