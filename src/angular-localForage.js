@@ -161,14 +161,16 @@
             if(found === key.length) {
               return res;
             }
+          }).then(function() {
+            deferred.resolve(res);
           });
         } else {
-          promise = self._localforage.getItem(self.prefix() + key);
+          promise = self._localforage.getItem(self.prefix() + key).then(function(item) {
+            deferred.resolve(item);
+          });
         }
 
-        promise.then(function success(item) {
-          deferred.resolve(item || res);
-        }, function error(data) {
+        promise.then(null, function error(data) {
           self.onError(data, args, self.getItem, deferred);
         });
 

@@ -61,6 +61,16 @@ describe('Module: LocalForageModule', function() {
     expect(typeof $localForage.getItem).toBe('function');
   });
 
+  it('getItem produces null value for unknown key', function(done) {
+    var interval = triggerDigests();
+
+    $localForage.getItem('this key is unknown').then(function(value) {
+      stopDigests(interval);
+      expect(value).toBeNull()
+      done();
+    }, done);
+  });
+
   it('setItem and getItem should work', function(done) {
     var interval = triggerDigests();
 
@@ -117,7 +127,7 @@ describe('Module: LocalForageModule', function() {
 
         $localForage.getItem('myName').then(function(data) {
           stopDigests(interval);
-          expect(data).toBeUndefined();
+          expect(data).toBeNull();
           done();
         }, done);
 
@@ -159,7 +169,7 @@ describe('Module: LocalForageModule', function() {
 
         $localForage.getItem('myName').then(function(data) {
           stopDigests(interval);
-          expect(data).toBeUndefined();
+          expect(data).toBeNull();
           done();
         }, done);
 
