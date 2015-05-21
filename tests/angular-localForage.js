@@ -66,11 +66,11 @@ describe('Module: LocalForageModule', function() {
 
     $localForage.getItem('this key is unknown').then(function(value) {
       stopDigests(interval);
-      expect(value).toBeNull()
+      expect(value).toBeNull();
       done();
     }, done);
   });
-
+  
   it('setItem and getItem should work', function(done) {
     var interval = triggerDigests();
 
@@ -85,7 +85,7 @@ describe('Module: LocalForageModule', function() {
 
     }, done);
   });
-
+  
   it('setItem and getItem should work with an array of keys', function(done) {
     var interval = triggerDigests(),
       values = ['Olivier Combe', 'AngularJs', 'Open Source'];
@@ -325,6 +325,40 @@ describe('Module: LocalForageModule', function() {
     expect(function() {
       $localForage.setItem();
     }).toThrowError('You must define a key to set');
+  });
+  
+  describe("bind", function() {
+    var $scope, $q;
+    
+    beforeEach(inject(function($rootScope, _$q_){
+      $scope = $rootScope;
+      $q = _$q_;
+    }));
+    
+    it(' should use the default stored value if nothing has been previously stored', function(done){
+      // Check different types of items.
+      var testItems = [ { foo: 'bar' }, ["cat", "dog", "pidgeon"], 123, 0, true, false ]
+      var promises = [];
+      // Store all the items, deleting old values
+      for(var i = 0; i < testItems.length; i++){
+        $localForage.removeItem('item' + i);
+        var item = testItems[i];
+        promises.push(
+          $localForage.bind($scope, {
+            key: 'item' + i,
+            defaultValue: item,
+          })
+        );
+      }
+      // After all promises have been resolved, check the items are what we expect them to be.
+      $q.all(promises).then(function(){      
+        for(var i = 0; i < testItems.length; i++){
+          expect($scope['item' + i]).toBe(testItems[i]);
+        }
+      });
+      done();
+    });
+    
   });
 
   describe("iterate", function() {

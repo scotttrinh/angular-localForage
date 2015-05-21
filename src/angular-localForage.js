@@ -365,9 +365,9 @@
           model = $parse(scopeKey);
 
         return self.getItem(opts.key).then(function(item) {
-          if(item) { // If it does exist assign it to the $scope value
+          if (item !== null) { // If it does exist assign it to the $scope value
             model.assign($scope, item);
-          } else if(opts.defaultValue) { // If a value doesn't already exist store it as is
+          } else if(!angular.isUndefined(opts.defaultValue)) { // If a value doesn't already exist store it as is
             model.assign($scope, opts.defaultValue);
             self.setItem(opts.key, opts.defaultValue);
           }
