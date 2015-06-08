@@ -20,7 +20,11 @@ This angularJS module is a rewrite of [angular-local-storage by grevory](https:/
 ## Usage :
 - Download the project or install via bower `bower install angular-localforage` or npm `npm install angular-localforage`
 - Download localForage https://github.com/mozilla/localForage
-- Put angular-localForage.js and localforage.js into you project
+- Put localforage.js and angular-localForage.js into you project
+```html
+<script src="path/to/localforage.js"></script>
+<script src="path/to/angular-localForage.js"></script>
+```
 - Add the module `LocalForageModule` to your application
 ```js
 angular.module('yourModule', ['LocalForageModule']);
