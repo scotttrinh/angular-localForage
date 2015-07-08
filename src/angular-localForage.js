@@ -419,12 +419,12 @@
           throw new Error("You must use the name of an existing instance");
         }
 
-        $parse(opts.scopeKey).assign($scope, null);
+        // $parse(opts.scopeKey).assign($scope, null);
         if(angular.isDefined(watchers[opts.key])) {
           watchers[opts.key](); // unwatch
           delete watchers[opts.key];
         }
-        return self.removeItem(opts.key);
+        return $q.when(true);
       };
 
       LocalForageInstance.prototype.prefix = function() {
