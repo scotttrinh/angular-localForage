@@ -1,3 +1,13 @@
+<a name="1.2.3"></a>
+# 1.2.3 (2015-07-10)
+
+
+## Bug Fixes
+
+- Fixed $localForage.bind with falsey defaults (+ test).
+ ([c686347b](https://github.com/ocombe/angular-localForage/commit/c686347bbfd6433710c4acd5182ea5915a5c3cc5))
+
+
 <a name="1.2.2"></a>
 # 1.2.2 (2014-12-08)
 
