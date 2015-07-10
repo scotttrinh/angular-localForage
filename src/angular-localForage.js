@@ -5,7 +5,7 @@
     define(['localforage'], function(localforage) {
       factory(root.angular, localforage);
     });
-  } else if(typeof exports === 'object') {
+  } else if(typeof exports === 'object' || typeof global === 'object') {
     var angular = root.angular || (window && window.angular);
     module.exports = factory(angular, require('localforage')); // Node/Browserify
   } else {
