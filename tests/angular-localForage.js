@@ -70,7 +70,41 @@ describe('Module: LocalForageModule', function() {
       done();
     }, done);
   });
-  
+
+  describe("iterate", function() {
+    var interval;
+
+    beforeEach(function(done) {
+      interval = triggerDigests();
+      $localForage.setItem(['myName', 'myPassion', 'myHobbie'], ['Olivier Combe', 'AngularJs', 'Open Source']).then(done, done);
+    });
+
+    it('should work', function(done) {
+      var res = [];
+
+      $localForage.iterate(function(value, key) {
+        res.push(key);
+      }).then(function() {
+        stopDigests(interval);
+        expect(res.length).toEqual(3);
+        done();
+      }, done);
+    });
+
+    it('key/value filter should work', function(done) {
+      //test key filter
+      $localForage.iterate(function(value, key) {
+        if(key == 'myPassion') {
+          return value;
+        }
+      }).then(function(data) {
+        stopDigests(interval);
+        expect(data).toEqual('AngularJs');
+        done();
+      }, done);
+    });
+  });
+
   it('setItem and getItem should work', function(done) {
     var interval = triggerDigests();
 
@@ -85,7 +119,7 @@ describe('Module: LocalForageModule', function() {
 
     }, done);
   });
-  
+
   it('setItem and getItem should work with an array of keys', function(done) {
     var interval = triggerDigests(),
       values = ['Olivier Combe', 'AngularJs', 'Open Source'];
@@ -266,8 +300,7 @@ describe('Module: LocalForageModule', function() {
     $localForage.setItem('myArray', [{
       $$hashKey: '00A',
       name: 'Olivier Combe'
-    }]).then(function(d) {
-
+    }]).then(function() {
       $localForage.getItem('myArray').then(function(data) {
         stopDigests(interval);
         expect(data.length).toEqual(1);
@@ -285,8 +318,7 @@ describe('Module: LocalForageModule', function() {
       $localForage.setItem('myArray', [{
         $$hashKey: '00A',
         name: 'Olivier Combe'
-      }]).then(function(d) {
-
+      }]).then(function() {
         $localForage.getItem('myArray').then(function(data) {
           stopDigests(interval);
           expect(data.length).toEqual(1);
@@ -326,18 +358,18 @@ describe('Module: LocalForageModule', function() {
       $localForage.setItem();
     }).toThrowError('You must define a key to set');
   });
-  
+
   describe("bind", function() {
     var $scope, $q;
-    
+
     beforeEach(inject(function($rootScope, _$q_){
       $scope = $rootScope;
       $q = _$q_;
     }));
-    
+
     it(' should use the default stored value if nothing has been previously stored', function(done){
       // Check different types of items.
-      var testItems = [ { foo: 'bar' }, ["cat", "dog", "pidgeon"], 123, 0, true, false ]
+      var testItems = [ { foo: 'bar' }, ["cat", "dog", "pidgeon"], 123, 0, true, false ];
       var promises = [];
       // Store all the items, deleting old values
       for(var i = 0; i < testItems.length; i++){
@@ -346,52 +378,17 @@ describe('Module: LocalForageModule', function() {
         promises.push(
           $localForage.bind($scope, {
             key: 'item' + i,
-            defaultValue: item,
+            defaultValue: item
           })
         );
       }
       // After all promises have been resolved, check the items are what we expect them to be.
-      $q.all(promises).then(function(){      
+      $q.all(promises).then(function(){
         for(var i = 0; i < testItems.length; i++){
           expect($scope['item' + i]).toBe(testItems[i]);
         }
       });
       done();
-    });
-    
-  });
-
-  describe("iterate", function() {
-    var interval;
-
-    beforeEach(function(done) {
-      interval = triggerDigests();
-      $localForage.setItem(['myName', 'myPassion', 'myHobbie'], ['Olivier Combe', 'AngularJs', 'Open Source']).then(done, done);
-    });
-
-    it('should work', function(done) {
-      var res = [];
-
-      $localForage.iterate(function(value, key) {
-        res.push(key);
-      }).then(function(data) {
-        stopDigests(interval);
-        expect(res.length).toEqual(3);
-        done();
-      }, done);
-    });
-
-    it('key/value filter should work', function(done) {
-      //test key filter
-      $localForage.iterate(function(value, key) {
-        if(key == 'myPassion') {
-          return value;
-        }
-      }).then(function(data) {
-        stopDigests(interval);
-        expect(data).toEqual('AngularJs');
-        done();
-      }, done);
     });
   });
 });

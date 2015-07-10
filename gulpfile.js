@@ -1,9 +1,12 @@
 var gulp = require('gulp');
 
-gulp.task('karma', function(callback) {
-	var conf = require('./karma.conf').conf;
-	conf.browsers = ['Firefox', 'Chrome'];
-	return require('karma-as-promised').server.start(conf);
+gulp.task('karma', function(done) {
+  var karma = require('karma').server;
+  karma.start({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true,
+    browsers: ['Firefox', 'Chrome']
+  }, done);
 });
 
 var build = function(newVer) {

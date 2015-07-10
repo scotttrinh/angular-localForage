@@ -30,7 +30,6 @@
     "url": "https://github.com/ocombe/angular-localForage/issues"
   },
   "devDependencies": {
-    "gulp-rimraf": "~0.1.1",
     "gulp": "~3.8.10",
     "gulp-concat": "~2.4.2",
     "gulp-exec": "~2.1.1",
@@ -38,9 +37,10 @@
     "gulp-json-editor": "~2.2.1",
     "gulp-prompt": "~0.1.1",
     "gulp-rename": "^1.2.0",
+    "gulp-rimraf": "~0.1.1",
     "gulp-uglify": "~1.0.2",
+    "jasmine-core": "~2.3.4",
     "karma": "~0.12.28",
-    "karma-as-promised": "~1.0.0",
     "karma-chrome-launcher": "~0.1.7",
     "karma-cli": "~0.0.4",
     "karma-firefox-launcher": "~0.1.3",

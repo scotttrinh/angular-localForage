@@ -12,7 +12,7 @@
     define(['localforage'], function(localforage) {
       factory(root.angular, localforage);
     });
-  } else if(typeof exports === 'object') {
+  } else if(typeof exports === 'object' || typeof global === 'object') {
     var angular = root.angular || (window && window.angular);
     module.exports = factory(angular, require('localforage')); // Node/Browserify
   } else {
@@ -168,14 +168,16 @@
             if(found === key.length) {
               return res;
             }
+          }).then(function() {
+            deferred.resolve(res);
           });
         } else {
-          promise = self._localforage.getItem(self.prefix() + key);
+          promise = self._localforage.getItem(self.prefix() + key).then(function(item) {
+            deferred.resolve(item);
+          });
         }
 
-        promise.then(function success(item) {
-          deferred.resolve(item || res);
-        }, function error(data) {
+        promise.then(null, function error(data) {
           self.onError(data, args, self.getItem, deferred);
         });
 
@@ -370,9 +372,9 @@
           model = $parse(scopeKey);
 
         return self.getItem(opts.key).then(function(item) {
-          if(item) { // If it does exist assign it to the $scope value
+          if (item !== null) { // If it does exist assign it to the $scope value
             model.assign($scope, item);
-          } else if(opts.defaultValue) { // If a value doesn't already exist store it as is
+          } else if(!angular.isUndefined(opts.defaultValue)) { // If a value doesn't already exist store it as is
             model.assign($scope, opts.defaultValue);
             self.setItem(opts.key, opts.defaultValue);
           }
