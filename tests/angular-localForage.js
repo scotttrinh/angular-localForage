@@ -307,7 +307,6 @@ describe('Module: LocalForageModule', function() {
         expect(data[0].name).toEqual('Olivier Combe');
         done();
       }, done);
-
     }, done);
   });
 
@@ -368,6 +367,7 @@ describe('Module: LocalForageModule', function() {
     }));
 
     it(' should use the default stored value if nothing has been previously stored', function(done){
+      var interval = triggerDigests();
       // Check different types of items.
       var testItems = [ { foo: 'bar' }, ["cat", "dog", "pidgeon"], 123, 0, true, false ];
       var promises = [];
@@ -384,11 +384,12 @@ describe('Module: LocalForageModule', function() {
       }
       // After all promises have been resolved, check the items are what we expect them to be.
       $q.all(promises).then(function(){
+        stopDigests(interval);
         for(var i = 0; i < testItems.length; i++){
           expect($scope['item' + i]).toBe(testItems[i]);
         }
-      });
-      done();
+        done();
+      }, done);
     });
   });
 });
