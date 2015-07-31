@@ -34,7 +34,7 @@ gulp.task('build-files', function() {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('build', ['karma'], function() {
+gulp.task('build', ['karma'], function(done) {
   runSequence('karma', 'build-files', done);
 });
 

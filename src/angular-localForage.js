@@ -113,7 +113,7 @@
         } else {
           var deferred = $q.defer(),
             args = arguments,
-            localCopy = typeof Blob !== 'undefined' && value instanceof Blob ? value : angular.copy(value);
+            localCopy = typeof Blob !== 'undefined' && typeof ArrayBuffer !== 'undefined' && (value instanceof Blob || value instanceof ArrayBuffer) ? value : angular.copy(value);
 
           //avoid $promises attributes from value objects, if present.
           if(angular.isObject(localCopy) && angular.isDefined(localCopy.$promise)) {
