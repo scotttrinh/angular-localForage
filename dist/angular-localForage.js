@@ -1,6 +1,6 @@
 /**
  * angular-localforage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v1.2.2
+ * @version v1.2.3
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
  * @author Olivier Combe <olivier.combe@gmail.com>
@@ -12,7 +12,7 @@
     define(['localforage'], function(localforage) {
       factory(root.angular, localforage);
     });
-  } else if(typeof exports === 'object') {
+  } else if(typeof exports === 'object' || typeof global === 'object') {
     var angular = root.angular || (window && window.angular);
     module.exports = factory(angular, require('localforage')); // Node/Browserify
   } else {
@@ -120,7 +120,7 @@
         } else {
           var deferred = $q.defer(),
             args = arguments,
-            localCopy = typeof Blob !== 'undefined' && value instanceof Blob ? value : angular.copy(value);
+            localCopy = typeof Blob !== 'undefined' && typeof ArrayBuffer !== 'undefined' && (value instanceof Blob || value instanceof ArrayBuffer) ? value : angular.copy(value);
 
           //avoid $promises attributes from value objects, if present.
           if(angular.isObject(localCopy) && angular.isDefined(localCopy.$promise)) {
@@ -168,14 +168,16 @@
             if(found === key.length) {
               return res;
             }
+          }).then(function() {
+            deferred.resolve(res);
           });
         } else {
-          promise = self._localforage.getItem(self.prefix() + key);
+          promise = self._localforage.getItem(self.prefix() + key).then(function(item) {
+            deferred.resolve(item);
+          });
         }
 
-        promise.then(function success(item) {
-          deferred.resolve(item || res);
-        }, function error(data) {
+        promise.then(null, function error(data) {
           self.onError(data, args, self.getItem, deferred);
         });
 
@@ -370,9 +372,9 @@
           model = $parse(scopeKey);
 
         return self.getItem(opts.key).then(function(item) {
-          if(item) { // If it does exist assign it to the $scope value
+          if (item !== null) { // If it does exist assign it to the $scope value
             model.assign($scope, item);
-          } else if(opts.defaultValue) { // If a value doesn't already exist store it as is
+          } else if(!angular.isUndefined(opts.defaultValue)) { // If a value doesn't already exist store it as is
             model.assign($scope, opts.defaultValue);
             self.setItem(opts.key, opts.defaultValue);
           }
