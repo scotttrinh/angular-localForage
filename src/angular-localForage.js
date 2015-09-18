@@ -9,7 +9,7 @@
     var angular = root.angular || (window && window.angular);
     module.exports = factory(angular, require('localforage')); // Node/Browserify
   } else {
-    factory(root.angular, root.localforage);                        // Browser
+    return factory(root.angular, root.localforage);                        // Browser
   }
 })(this, function(angular, localforage, undefined) {
   'use strict';
@@ -470,5 +470,7 @@
       }
     }
   }]);
+
+  return angularLocalForage.name;
 });
 
