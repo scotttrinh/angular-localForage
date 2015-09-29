@@ -1,6 +1,6 @@
 /**
  * angular-localforage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v1.2.3
+ * @version v1.2.4
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
  * @author Olivier Combe <olivier.combe@gmail.com>
@@ -426,12 +426,11 @@
           throw new Error("You must use the name of an existing instance");
         }
 
-        $parse(opts.scopeKey).assign($scope, null);
         if(angular.isDefined(watchers[opts.key])) {
           watchers[opts.key](); // unwatch
           delete watchers[opts.key];
         }
-        return self.removeItem(opts.key);
+        return $q.when(true);
       };
 
       LocalForageInstance.prototype.prefix = function() {
@@ -478,4 +477,3 @@
     }
   }]);
 });
-
