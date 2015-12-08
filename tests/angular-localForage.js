@@ -71,6 +71,54 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
+  describe('getItem for an array with unknown keys', function() {
+    it('should produce null values with all unknown keys', function(done) {
+      var interval = triggerDigests();
+
+      $localForage.getItem(['unknown key 1', 'unknown key 2']).then(function(values) {
+        stopDigests(interval);
+        expect(values).toEqual([null, null]);
+        done()
+      }, done)
+    });
+
+    it('should produce null value for an unknown trailing key', function(done) {
+      var interval = triggerDigests();
+
+      $localForage.setItem('known key', 'known value').then(function() {
+        $localForage.getItem(['known key', 'unknown key']).then(function(values) {
+          stopDigests(interval);
+          expect(values).toEqual(['known value', null]);
+          done()
+        }, done)
+      });
+    });
+
+    it('should produce null value for an unknown initial key', function(done) {
+      var interval = triggerDigests();
+
+      $localForage.setItem('known key', 'known value').then(function() {
+        $localForage.getItem(['unknown key', 'known key']).then(function(values) {
+          stopDigests(interval);
+          expect(values).toEqual([null, 'known value']);
+          done()
+        }, done)
+      });
+    });
+
+    it('should produce null value for a unknown middle key', function(done) {
+      var interval = triggerDigests();
+
+      $localForage.setItem(['known key', 'known key 2'], ['known value', 'known value 2']).then(function() {
+        $localForage.getItem(['known key', 'unknown key', 'known key 2']).then(function(values) {
+          stopDigests(interval);
+          expect(values).toEqual(['known value', null, 'known value 2']);
+          done()
+        }, done)
+      });
+    });
+  });
+
   describe("iterate", function() {
     var interval;
 
@@ -173,8 +221,8 @@ describe('Module: LocalForageModule', function() {
 
         $localForage.getItem(['myName', 'myPassion', 'myHobbie']).then(function(data) {
           stopDigests(interval);
-          expect(data[0]).toBeUndefined();
-          expect(data[1]).toBeUndefined();
+          expect(data[0]).toBeNull();
+          expect(data[1]).toBeNull();
           expect(data[2]).toEqual('Open Source');
           done();
         }, done);
@@ -216,8 +264,8 @@ describe('Module: LocalForageModule', function() {
 
         $localForage.getItem(['myName', 'myPassion', 'myHobbie']).then(function(data) {
           stopDigests(interval);
-          expect(data[0]).toBeUndefined();
-          expect(data[1]).toBeUndefined();
+          expect(data[0]).toBeNull();
+          expect(data[1]).toBeNull();
           expect(data[2]).toEqual('Open Source');
           done();
         }, done);
