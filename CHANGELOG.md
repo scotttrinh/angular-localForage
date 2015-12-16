@@ -21,7 +21,8 @@
 
 - Fixed $localForage.bind with falsey defaults (+ test).
  ([c686347b](https://github.com/ocombe/angular-localForage/commit/c686347bbfd6433710c4acd5182ea5915a5c3cc5))
-
+- getItem returns null for unknown key ([c88e346](https://github.com/zarko-tg/angular-localForage/commit/c88e346fee3302e5c024f8c8d1fc23694073224a),
+ [#55](https://github.com/ocombe/angular-localForage/issues/55))
 
 <a name="1.2.2"></a>
 # 1.2.2 (2014-12-08)
