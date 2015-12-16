@@ -1,3 +1,18 @@
+<a name="1.2.4"></a>
+# 1.2.4 (2015-12-16)
+
+
+## Bug Fixes
+
+- require localforage ~1.2.10
+ ([b75ef139](https://github.com/ocombe/angular-localForage/commit/b75ef1397bfec9dac50fa43f624e0da1d5b2f600),
+ [#84](https://github.com/ocombe/angular-localForage/issues/84))
+- gulpfile.js missing done var in build task
+ ([670398ab](https://github.com/ocombe/angular-localForage/commit/670398ab120e0052cbaa5ed6103bd27ad2c7d6fd))
+- ArrayBuffer binary type is now supported
+ ([7b1be931](https://github.com/ocombe/angular-localForage/commit/7b1be931615312f6ba247c1d02a08042631df6cb))
+
+
 <a name="1.2.3"></a>
 # 1.2.3 (2015-07-10)
 
