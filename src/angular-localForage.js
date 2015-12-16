@@ -162,6 +162,11 @@
               return res;
             }
           }).then(function() {
+            for (var i = 0; i < key.length; i++) {
+              if (angular.isUndefined(res[i])) {
+                res[i] = null;
+              }
+            }
             deferred.resolve(res);
           });
         } else {
