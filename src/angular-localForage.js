@@ -1,15 +1,15 @@
 (function(root, factory) {
   'use strict';
 
+  var angular = root.angular || (window && window.angular);
   if(typeof define === 'function' && define.amd) {                    // AMD
     define(['localforage'], function(localforage) {
-      factory(root.angular, localforage);
+      factory(angular, localforage);
     });
   } else if(typeof exports === 'object' || typeof global === 'object') {
-    var angular = root.angular || (window && window.angular);
     module.exports = factory(angular, require('localforage')); // Node/Browserify
   } else {
-    return factory(root.angular, root.localforage);                        // Browser
+    return factory(angular, root.localforage);                        // Browser
   }
 })(this, function(angular, localforage, undefined) {
   'use strict';
