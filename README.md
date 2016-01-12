@@ -85,11 +85,11 @@ $localForage.iterate(function(value, key) {
 ```js
 $localForage.bind($scope, 'myStorageKey');
 ```
-
+**Note: It only binds when the object is already stored in the database or when you provide a default value.**
 ```js
 $localForage.bind($scope, {
     key: 'myStorageKey', // required
-    defaultValue: {test: 'my test'}, // a default value
+    defaultValue: {test: 'my test'}, // a default value (needed if it is not already in the database)
     scopeKey: 'myObj.myVar', // the name of the scope key (if you want it to be different from key)
     name: 'myApp' // instance name
 });
