@@ -1,7 +1,7 @@
 (function(root, factory) {
   'use strict';
 
-  var angular = root.angular || (window && window.angular);
+  var angular = root ? root.angular : window.angular;
   if(typeof define === 'function' && define.amd) {                    // AMD
     define(['localforage'], function(localforage) {
       factory(angular, localforage);
