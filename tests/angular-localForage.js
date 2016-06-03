@@ -186,7 +186,7 @@ describe('Module: LocalForageModule', function() {
     $localForage.setItem(['myName', 'myPassion', 'myHobbie'], values).then(function(data) {
       expect(data).toEqual(values);
 
-        $localForage.getItem(['myHobbie', 'myName', 'notInDatabase']).then(function(data) {
+      $localForage.getItem(['myHobbie', 'myName', 'notInDatabase']).then(function(data) {
         stopDigests(interval);
         expect(data.length).toEqual(3);
         expect(data).toEqual(['Open Source', 'Olivier Combe', null]);
