@@ -1,3 +1,12 @@
+<a name="1.2.6"></a>
+# 1.2.6 (2016-xx-xx)
+
+## Bug Fixes
+
+- Fix webpack ([249d2f2](https://github.com/ocombe/angular-localForage/commit/249d2f2ee60284b0d0050fb3b41a2a4b3cc89157), [#91](https://github.com/ocombe/angular-localForage/pull/91))
+- Allow Angular 1.5 ([eef7a3f](https://github.com/ocombe/angular-localForage/commit/870e48eb6007846205203fd8cc695a7fad9d0809), [#107](https://github.com/ocombe/angular-localForage/pull/107))
+- Bump localforage version to ~1.4 ([9bc340b](https://github.com/ocombe/angular-localForage/commit/9bc340bea00999435657ecf9068c57151cf50a45), [ee0ff97](https://github.com/ocombe/angular-localForage/commit/ee0ff97e673111a0e8c92344bcf2b9938c0cac1a), [#106](https://github.com/ocombe/angular-localForage/pull/106), [#109](https://github.com/ocombe/angular-localForage/pull/109))
+
 <a name="1.2.5"></a>
 # 1.2.5 (2015-12-16)
 
