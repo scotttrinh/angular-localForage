@@ -7,6 +7,7 @@
  */
 (function(root, factory) {
   'use strict';
+
   var angular = root.angular || (window && window.angular);
   if(typeof define === 'function' && define.amd) {                    // AMD
     define(['localforage'], function(localforage) {
@@ -144,7 +145,7 @@
       };
 
       // Directly get a value from storage
-      LocalForageInstance.prototype.getItem = function getItem(key) {
+      LocalForageInstance.prototype.getItem = function getItem(key, rejectOnNull) {
         // throw error on undefined key
         if(angular.isUndefined(key)) {
           throw new Error("You must define a key to get");
@@ -168,16 +169,26 @@
               return res;
             }
           }).then(function() {
+            var shouldResolve = true;
             for (var i = 0; i < key.length; i++) {
               if (angular.isUndefined(res[i])) {
                 res[i] = null;
+                shouldResolve = false;
               }
             }
-            deferred.resolve(res);
+            if (shouldResolve || !rejectOnNull) {
+              deferred.resolve(res);
+            } else {
+              deferred.reject(res);
+            }
           });
         } else {
           promise = self._localforage.getItem(self.prefix() + key).then(function(item) {
-            deferred.resolve(item);
+            if (rejectOnNull && item === null) {
+              deferred.reject(item);
+            } else {
+              deferred.resolve(item);
+            }
           });
         }
 
@@ -484,3 +495,4 @@
 
   return angularLocalForage.name;
 });
+

@@ -71,6 +71,17 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
+  it('getItem produces a rejected promise for unknown key if second parameter is true', function(done) {
+    var interval = triggerDigests();
+
+    $localForage.getItem('this key is unknown', true)
+      .catch(function(err) {
+        stopDigests(interval);
+        expect(err).toBe(null);
+        done();
+      });
+  })
+
   describe('getItem for an array with unknown keys', function() {
     it('should produce null values with all unknown keys', function(done) {
       var interval = triggerDigests();
@@ -175,15 +186,29 @@ describe('Module: LocalForageModule', function() {
     $localForage.setItem(['myName', 'myPassion', 'myHobbie'], values).then(function(data) {
       expect(data).toEqual(values);
 
-      $localForage.getItem(['myHobbie', 'myName']).then(function(data) {
+      $localForage.getItem(['myHobbie', 'myName', 'notInDatabase']).then(function(data) {
         stopDigests(interval);
-        expect(data.length).toEqual(2);
-        expect(data).toEqual(['Open Source', 'Olivier Combe']);
+        expect(data.length).toEqual(3);
+        expect(data).toEqual(['Open Source', 'Olivier Combe', null]);
         done();
       }, done);
 
     }, done);
   });
+
+  it('getItem should reject if one of the values is null if true is passed as the second argument', function(done) {
+    var interval = triggerDigests();
+
+    $localForage.setItem(['myName', 'myPassion'], ['Scott Trinh', 'Anarchy']).then(function(data) {
+      $localForage.getItem(['myPassion', 'myName', 'notInDatabase'], true).catch(function(data) {
+        stopDigests(interval);
+        expect(data.length).toEqual(3);
+        expect(data).toEqual(['Anarchy', 'Scott Trinh', null]);
+        done();
+      });
+    });
+
+  })
 
   it('iterate should be defined', function() {
     expect($localForage.iterate).toBeDefined();
