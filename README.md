@@ -172,15 +172,17 @@ Download the required libs :
 
 ```
 npm install
+bower install
 ```
 
 Then start the tests with :
 
 ```
-npm test
+gulp karma
 ```
 
-It will launch Chrome and Firefox, edit karma.conf.js if you want to change something. We could use more tests, see "contributing" below.
+It will launch Chrome and Firefox, edit the `karma` task in `gulpfile.js` if you want to change
+something. We could use more tests, see "contributing" below.
 
 ##Contributing
 
