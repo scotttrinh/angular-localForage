@@ -52,7 +52,13 @@ angular.module('yourModule', ['LocalForageModule'])
 
 - `setItem(key/Array<key>, value/Array<value>)`: stores data (async, promise)
 
-- `getItem(key/Array<key>)`: retrieves stored data (async, promise)
+- `getItem(key/Array<key>, rejectIfNull)`: retrieves stored data, rejects if rejectIfNull is truthy and one of the values is null (async, promise)
+
+localForage will return null for a lookup on a key that does not exist. If you set `rejectIfNull` to
+true, it will reject the promise if the value (or one of the values of the array lookup) is null. If
+you normally store `null` in the database, you can use the single arity version of the function to
+retrieve the null value, but you have no way to know if you've retrieved `null` or if the key did
+not exist.
 
 - `removeItem(key/Array<key>)`: removes stored data (async, promise)
 
