@@ -78,7 +78,7 @@ Iterate supports early exit by returning non `undefined` value inside `iteratorC
 Resulting value will be passed to the promise as the result of iteration.
 You can use this to make a search in your data:
 ```js
-$localForage.iterate(function(value, key) {
+$localForage.iterate(function(value, key, iterationNumber) {
     if(angular.isInt(value) && value > 10) {
         return key;
     }
