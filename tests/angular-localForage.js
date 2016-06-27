@@ -150,6 +150,18 @@ describe('Module: LocalForageModule', function() {
       }, done);
     });
 
+    it('should have an iterationNumber with a 1-index', function(done) {
+      var count;
+
+      $localForage.iterate(function(value, key, iterationNumber) {
+        count = iterationNumber;
+      }).then(function() {
+        stopDigests(interval);
+        expect(count).toEqual(3);
+        done();
+      }, done);
+    })
+
     it('key/value filter should work', function(done) {
       //test key filter
       $localForage.iterate(function(value, key) {
