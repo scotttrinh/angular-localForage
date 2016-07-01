@@ -477,4 +477,50 @@ describe('Module: LocalForageModule', function() {
       }, done);
     });
   });
+
+  describe("instance", function () {
+      var testInstance_1;
+      var testInstance_2;
+      it('should create new instance for a storeName', function () {
+          testInstance_1 = $localForage.createInstance({
+              storeName: 'TEST_INSTANCE_1'
+          });
+      });
+      it('should create new instance for another storeName in same name', function () {
+          testInstance_2 = $localForage.createInstance({
+              storeName: 'TEST_INSTANCE_2'
+          });
+      });
+      it('should give error if user tries to create new instance with already created storeName', function () {
+          var instance = $localForage.createInstance({
+              storeName: 'TEST_INSTANCE_3'
+          });
+          expect(function () {
+              var duplicateInstance = $localForage.createInstance({
+                  storeName: 'TEST_INSTANCE_3'
+              });
+          }).toThrowError();
+      });
+      it('should get created instance', function () {
+          $localForage.createInstance({
+              name: 'testName',
+              storeName: 'TEST_INSTANCE_4'
+          });
+          var instance = $localForage.instance({
+              name: 'testName',
+              storeName: 'TEST_INSTANCE_4'
+          });
+      });
+      it('should not get non-created instance', function () {
+          expect(function () {
+              $localForage.instance({storeName: 'TEST_INSTANCE_4'});
+          }).toThrowError('No localForage instance of that name exists.');
+          expect(function () {
+              $localForage.instance({
+                  name: 'wrongTestName',
+                  storeName: 'TEST_INSTANCE_4'
+              });
+          }).toThrowError('No localForage instance of that name exists.');
+      });
+  });
 });
