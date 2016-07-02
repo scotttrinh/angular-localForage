@@ -1,3 +1,34 @@
+<a name="1.3.0"></a>
+# 1.3.0 (2016-07-02)
+
+
+## Bug Fixes
+
+- If there is no root, use angular from window
+ ([bcb80690](https://github.com/ocombe/angular-localForage/commit/bcb80690cf7185ffa79dce4dfa15c8efbf326270))
+
+
+## Features
+
+- Optionally reject on null lookup
+ ([efd0e660](https://github.com/ocombe/angular-localForage/commit/efd0e660a850cb27e07f41d2b5b0a46bd0dd0aed),
+ [#111](https://github.com/ocombe/angular-localForage/issues/111))
+- Bump LocalForage to ~1.4
+ ([9bc340b](https://github.com/ocombe/angular-localForage/commit/9bc340bea00999435657ecf9068c57151cf50a45)),
+ [#108](https://github.com/ocombe/angular-localForage/issues/108),
+ [#115](https://github.com/ocombe/angular-localForage/issues/115),
+
+
+## Documentation
+
+- Fix unit test documentation
+ ([f821f464](https://github.com/ocombe/angular-localForage/commit/f821f46458c9fc97b0fc275e737dedaea8245628))
+- Update API reference for getItem
+ ([283bc263](https://github.com/ocombe/angular-localForage/commit/283bc263bc6d575043b543ed5300a6bb9189902b))
+- Update API reference and tests for iteration to include iterationNumber examples
+ ([fe8bd37](https://github.com/ocombe/angular-localForage/commit/fe8bd37032d16386e8efc63ea5e470e8f1fbaf16))
+
+
 <a name="1.2.5"></a>
 # 1.2.5 (2015-12-16)
 
