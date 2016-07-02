@@ -544,7 +544,6 @@ describe('Module: LocalForageModule', function() {
 
       it('should get instances with same name, different storeNames',
          function (done) {
-          triggerDigests();
           var instance1 = $localForage.instance({
               name: 'TEST_INSTANCE_2',
               storeName: 'TEST_STORE_NAME_1'
