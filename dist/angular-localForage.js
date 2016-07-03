@@ -1,6 +1,6 @@
 /**
  * angular-localforage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v1.3.0
+ * @version v1.3.1
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
  * @author Olivier Combe <olivier.combe@gmail.com>
@@ -8,7 +8,7 @@
 (function(root, factory) {
   'use strict';
 
-  var angular = root ? root.angular : window.angular;
+  var angular = (root && root.angular) || (window && window.angular);
   if(typeof define === 'function' && define.amd) {                    // AMD
     define(['localforage'], function(localforage) {
       factory(angular, localforage);

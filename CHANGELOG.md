@@ -1,3 +1,12 @@
+<a name="1.3.1"></a>
+# 1.3.1 (2016-07-03)
+
+## Bug Fixes
+
+- Fix SystemJS loading
+  ([18c91d2](https://github.com/ocombe/angular-localForage/commit/18c91d28cac92e1530e6a208029cb61b82d5b53b))
+
+
 <a name="1.3.0"></a>
 # 1.3.0 (2016-07-02)
 
