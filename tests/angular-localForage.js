@@ -479,92 +479,71 @@ describe('Module: LocalForageModule', function() {
   });
 
   describe("createInstance", function () {
-      beforeEach(function () {
-          $localForage.createInstance({
-              name: 'DUPLICATE_INSTANCE_NAME'
-          });
+    beforeEach(function () {
+      $localForage.createInstance({
+        name: 'DUPLICATE_INSTANCE_NAME'
       });
-      it('should create a new instance', function () {
-          expect($localForage.createInstance({
-              name: 'TEST_INSTANCE'
-          })).toBeDefined();
-      });
+    });
+    it('should create a new instance', function () {
+      expect($localForage.createInstance({
+        name: 'TEST_INSTANCE'
+      })).toBeDefined();
+    });
 
-      it('should throw error if trying to create duplicate instance.',
-         function () {
-          expect($localForage.createInstance.bind($localForage, {
-              name: 'DUPLICATE_INSTANCE_NAME'
-          })).toThrowError(/already defined/);
-      });
+    it('should throw error if trying to create duplicate instance.',
+       function () {
+      expect($localForage.createInstance.bind($localForage, {
+        name: 'DUPLICATE_INSTANCE_NAME'
+      })).toThrowError(/already defined/);
+    });
 
-      it('should create instance with same name, different storeName',
-         function () {
-          expect($localForage.createInstance.bind($localForage, {
-              name: 'DUPLICATE_INSTANCE_NAME',
-              storeName: 'DIFFERENT_STORE_NAME'
-          })).not.toThrowError(/already defined/);
-      });
+    it('should create instance with same name, different storeName',
+       function () {
+      expect($localForage.createInstance.bind($localForage, {
+        name: 'DUPLICATE_INSTANCE_NAME',
+        storeName: 'DIFFERENT_STORE_NAME'
+      })).not.toThrowError(/already defined/);
+    });
   });
 
   describe("instance", function () {
-      var $q, interval;
-      beforeEach(function () {
-          $localForage.createInstance({
-              name: 'TEST_INSTANCE_1'
-          });
-          $localForage.createInstance({
-              name: 'TEST_INSTANCE_2',
-              storeName: 'TEST_STORE_NAME_1'
-          });
-          $localForage.createInstance({
-              name: 'TEST_INSTANCE_2',
-              storeName: 'TEST_STORE_NAME_2'
-          });
-          inject(function (_$q_) {
-              $q = _$q_;
-          });
-          interval = triggerDigests();
+    beforeEach(function () {
+      $localForage.createInstance({
+        name: 'TEST_INSTANCE_1'
       });
+      $localForage.createInstance({
+        name: 'TEST_INSTANCE_2',
+        storeName: 'TEST_STORE_NAME_1'
+      });
+      $localForage.createInstance({
+        name: 'TEST_INSTANCE_2',
+        storeName: 'TEST_STORE_NAME_2'
+      });
+    });
 
-      afterEach(function () {
-          stopDigests(interval);
-      });
+    it('should get instance by name', function () {
+      expect($localForage.instance({
+        name: 'TEST_INSTANCE_1'
+      })).toBeDefined();
+    });
 
-      it('should get instance by name', function () {
-          expect($localForage.instance({
-              name: 'TEST_INSTANCE_1'
-          })).toBeDefined();
-      });
+    it('should throw exception if instance not exists', function () {
+      expect($localForage.instance.bind($localForage, {
+        name: 'NON_EXISTENT'
+      })).toThrowError();
+    });
 
-      it('should throw exception if instance not exists', function () {
-          expect($localForage.instance.bind($localForage, {
-              name: 'NON_EXISTENT'
-          })).toThrowError();
+    it('should get instances with same name, different storeNames',
+       function () {
+      var instance1 = $localForage.instance({
+        name: 'TEST_INSTANCE_2',
+        storeName: 'TEST_STORE_NAME_1'
       });
-
-      it('should get instances with same name, different storeNames',
-         function (done) {
-          var instance1 = $localForage.instance({
-              name: 'TEST_INSTANCE_2',
-              storeName: 'TEST_STORE_NAME_1'
-          });
-          var instance2 = $localForage.instance({
-              name: 'TEST_INSTANCE_2',
-              storeName: 'TEST_STORE_NAME_2'
-          });
-          $q.all([
-              instance1.setItem('key', 'val1'),
-              instance2.setItem('key', 'val2')
-          ]).then(function () {
-              return $q.all([
-                  instance1.getItem('key').then(function (val) {
-                      expect(val).toEqual('val1');
-                  }),
-                  instance2.getItem('key').then(function (val) {
-                      expect(val).toEqual('val2');
-                  })
-              ]);
-          }).then(done);
+      var instance2 = $localForage.instance({
+        name: 'TEST_INSTANCE_2',
+        storeName: 'TEST_STORE_NAME_2'
       });
+      expect(instance1).not.toBe(instance2);
+    });
   });
 });
