@@ -1,3 +1,11 @@
+<a name="1.3.2"></a>
+# 1.3.2 (2016-09-14)
+
+## Bug Fixes
+
+- Add return to AMD module loading
+  ([467b988](https://github.com/ocombe/angular-localForage/commit/467b9883f7ce8ab5f2436f2a6ef85ac5f27c68bc))
+
 <a name="1.3.1"></a>
 # 1.3.1 (2016-07-03)
 
