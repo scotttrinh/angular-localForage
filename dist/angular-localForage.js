@@ -17,7 +17,7 @@
     if(typeof module === 'undefined') {
       global.module.exports = factory(angular, require('localforage')); // NW.js
     } else {
-      modules.exports = factory(angular, require('localforage')); // Node/Browserify
+      module.exports = factory(angular, require('localforage')); // Node/Browserify
     }
   } else {
     return factory(angular, root.localforage);                        // Browser
