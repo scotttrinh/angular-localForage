@@ -1,3 +1,14 @@
+<a name="1.3.3"></a>
+# 1.3.3 (2017-01-07)
+
+
+## Bug Fixes
+
+- NW.js module is not defined fix.
+ ([e95da45e](https://github.com/ocombe/angular-localForage/commit/e95da45ee4f5798b1d9c549377b1514e43d39092),
+ [#77](https://github.com/ocombe/angular-localForage/issues/77))
+
+
 <a name="1.3.2"></a>
 # 1.3.2 (2016-09-14)
 
