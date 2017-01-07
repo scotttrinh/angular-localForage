@@ -51,6 +51,11 @@ describe('Module: LocalForageModule', function() {
     expect(typeof $localForage.driver).toBe('function');
   });
 
+  it('defineDriver should be defined', function() {
+    expect($localForage.defineDriver).toBeDefined();
+    expect(typeof $localForage.defineDriver).toBe('function');
+  });
+
   it('setItem should be defined', function() {
     expect($localForage.setItem).toBeDefined();
     expect(typeof $localForage.setItem).toBe('function');

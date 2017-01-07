@@ -101,6 +101,11 @@
         return this._localforage.driver();
       };
 
+      // Define a new driver for upstream consistency
+      LocalForageInstance.prototype.defineDriver = function defineDriver(driver) {
+        return this._localforage.defineDriver(driver);
+      }
+
       // Directly adds a value to storage
       LocalForageInstance.prototype.setItem = function setItem(key, value) {
         // throw error on undefined key, we allow undefined value because... why not ?
