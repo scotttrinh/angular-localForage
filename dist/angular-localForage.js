@@ -14,7 +14,11 @@
       return factory(angular, localforage);
     });
   } else if(typeof exports === 'object' || typeof global === 'object') {
-    module.exports = factory(angular, require('localforage')); // Node/Browserify
+    if(typeof module === 'undefined') {
+      global.module.exports = factory(angular, require('localforage')); // NW.js
+    } else {
+      module.exports = factory(angular, require('localforage')); // Node/Browserify
+    }
   } else {
     return factory(angular, root.localforage);                        // Browser
   }
