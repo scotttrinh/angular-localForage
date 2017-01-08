@@ -72,7 +72,7 @@
 
       LocalForageInstance.prototype.instance = function instance(name) {
         if(angular.isUndefined(name)) {
-          return lfInstances[defaultConfig.name + '#' + defaultConfig.storeName];
+          return lfInstances[defaultConfig.name];
         } else if(angular.isString(name)) {
           var lfInstanceName = name + '#' + defaultConfig.storeName;
           if(angular.isDefined(lfInstances[lfInstanceName])) {

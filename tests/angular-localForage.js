@@ -535,15 +535,16 @@ describe('Module: LocalForageModule', function() {
 
     it('should get instances with same name, different storeNames',
        function () {
-      var instance1 = $localForage.instance({
-        name: 'TEST_INSTANCE_2',
-        storeName: 'TEST_STORE_NAME_1'
-      });
-      var instance2 = $localForage.instance({
-        name: 'TEST_INSTANCE_2',
-        storeName: 'TEST_STORE_NAME_2'
-      });
-      expect(instance1).not.toBe(instance2);
-    });
+         var instance1 = $localForage.instance({
+           name: 'TEST_INSTANCE_2',
+           storeName: 'TEST_STORE_NAME_1'
+         });
+         var instance2 = $localForage.instance({
+           name: 'TEST_INSTANCE_2',
+           storeName: 'TEST_STORE_NAME_2'
+         });
+         expect(instance1).not.toBe(instance2);
+       }
+    );
   });
 });
