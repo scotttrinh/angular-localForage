@@ -1,3 +1,20 @@
+<a name="1.3.4"></a>
+# 1.3.4 (2017-02-22)
+
+
+## Features
+
+- Add defineDriver method for upstream consistency
+ ([ac1c3b9c](https://github.com/ocombe/angular-localForage/commit/ac1c3b9cbd40ffa0fa6bd428d34d7bc9bd4d7a71),
+ [#105](https://github.com/ocombe/angular-localForage/issues/105))
+
+
+## Performance Improvements
+
+- Do not copy value on setItem
+ ([6a42de38](https://github.com/ocombe/angular-localForage/commit/6a42de381e6969a13dfac07e2e04f1b9cd806b3a))
+
+
 <a name="1.3.3"></a>
 # 1.3.3 (2017-01-07)
 
