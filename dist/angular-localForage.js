@@ -1,6 +1,6 @@
 /**
  * angular-localforage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v1.3.4
+ * @version v1.3.5
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
  * @author Olivier Combe <olivier.combe@gmail.com>
@@ -146,7 +146,7 @@
               deferred.resolve(localCopy);
             })
             .catch(function withError(error) {
-              self.onError(data, args, self.setItem, deferred);
+              self.onError(error, args, self.setItem, deferred);
             });
 
           return deferred.promise;

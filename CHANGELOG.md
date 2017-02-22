@@ -1,3 +1,13 @@
+<a name="1.3.5"></a>
+# 1.3.5 (2017-02-22)
+
+
+## Bug Fixes
+
+- Use correct error handler parameter
+ ([2b01f4ec](https://github.com/ocombe/angular-localForage/commit/2b01f4ec20271c7f0cae9b5ebb662988abae5024))
+
+
 <a name="1.3.4"></a>
 # 1.3.4 (2017-02-22)
 
