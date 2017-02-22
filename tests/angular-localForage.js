@@ -202,6 +202,19 @@ describe('Module: LocalForageModule', function() {
     }, done);
   });
 
+  it('setItem error should reject promise', function(done) {
+    var interval = triggerDigests();
+
+    spyOn($localForage._localforage, 'setItem').and.callFake(function() {
+      return Promise.reject('Somebody set up us the bomb.')
+    });
+
+    $localForage.setItem('myError', 'please work!').then(done).catch(function withError(error) {
+      expect(error).toEqual('Somebody set up us the bomb.');
+      done();
+    });
+  });
+
   it('setItem and getItem should work with an array of keys', function(done) {
     var interval = triggerDigests(),
       values = ['Olivier Combe', 'AngularJs', 'Open Source'];

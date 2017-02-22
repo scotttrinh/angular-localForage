@@ -139,7 +139,7 @@
               deferred.resolve(localCopy);
             })
             .catch(function withError(error) {
-              self.onError(data, args, self.setItem, deferred);
+              self.onError(error, args, self.setItem, deferred);
             });
 
           return deferred.promise;
