@@ -183,13 +183,19 @@ describe('Module: LocalForageModule', function() {
 
   it('setItem and getItem should work', function(done) {
     var interval = triggerDigests();
+    var objectToStore = {
+      name: 'Scott Trinh'
+    };
 
-    $localForage.setItem('myName', 'Olivier Combe').then(function(data) {
-      expect(data).toEqual('Olivier Combe');
+    spyOn($localForage._localforage, 'setItem').and.callThrough();
 
-      $localForage.getItem('myName').then(function(data) {
+    $localForage.setItem('myObject', objectToStore).then(function(data) {
+      expect(data).toEqual({ name: 'Scott Trinh' });
+      expect($localForage._localforage.setItem.calls.mostRecent().args[1]).toBe(objectToStore);
+
+      $localForage.getItem('myObject').then(function(data) {
         stopDigests(interval);
-        expect(data).toEqual('Olivier Combe');
+        expect(data).toEqual({ name: 'Scott Trinh' });
         done();
       }, done);
 
@@ -447,6 +453,43 @@ describe('Module: LocalForageModule', function() {
       $localForage.setItem();
     }).toThrowError('You must define a key to set');
   });
+
+  it('setItem should remove $promise if present', function (done) {
+    var interval = triggerDigests();
+    var objectToStore = {
+      $promise: {},
+      childObject: {}
+    };
+    var objectNoPromise = {
+      noPromise: {}
+    };
+    spyOn($localForage._localforage, 'setItem').and.callThrough();
+
+    $localForage.setItem(['myObject', 'noPromise'], [objectToStore, objectNoPromise]).then(function() {
+      var setWith = $localForage._localforage.setItem.calls.argsFor(0)[1];
+      var setWithNoPromise = $localForage._localforage.setItem.calls.argsFor(1)[1];
+      expect(setWith).not.toBe(objectToStore);
+      expect(setWith.childObject).toBe(objectToStore.childObject);
+      expect(setWith).toEqual({
+        childObject: {}
+      });
+      expect(objectToStore).toEqual({
+        $promise: {},
+        childObject: {}
+      });
+
+      expect(setWithNoPromise).toBe(objectNoPromise);
+
+      $localForage.getItem('myObject').then(function(data) {
+        stopDigests(interval);
+        expect(Object.keys(data).length).toBe(1);
+        expect(data).toEqual({
+          childObject: {}
+        });
+        done();
+      }, done);
+    }, done);
+  })
 
   describe("bind", function() {
     var $scope, $q;

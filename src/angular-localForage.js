@@ -113,34 +113,34 @@
             throw new Error('If you set an array of keys, the values should be an array too');
           }
 
-          var promises = [];
-          angular.forEach(key, function(k, index) {
-            promises.push(self.setItem(k, value[index]))
-          });
-
-          return $q.all(promises);
+          return $q.all(key.map(function (k, index) {
+            return self.setItem(k, value[index]);
+          }));
         } else {
           var deferred = $q.defer(),
             args = arguments,
-            localCopy = typeof Blob !== 'undefined' && typeof ArrayBuffer !== 'undefined' && (value instanceof Blob || value instanceof ArrayBuffer) ? value : angular.copy(value);
+            localCopy = value;
 
           //avoid $promises attributes from value objects, if present.
           if(angular.isObject(localCopy) && angular.isDefined(localCopy.$promise)) {
-            delete localCopy.$promise; //delete attribut from object structure.
+            localCopy = angular.extend({}, value);
+            delete localCopy.$promise;
           }
 
-          self._localforage.setItem(self.prefix() + key, localCopy).then(function success() {
-            if(notify.setItem) {
-              $rootScope.$broadcast('LocalForageModule.setItem', {
-                key: key,
-                newvalue: localCopy,
-                driver: self.driver()
-              });
-            }
-            deferred.resolve(localCopy);
-          }, function error(data) {
-            self.onError(data, args, self.setItem, deferred);
-          });
+          self._localforage.setItem(self.prefix() + key, localCopy)
+            .then(function success() {
+              if(notify.setItem) {
+                $rootScope.$broadcast('LocalForageModule.setItem', {
+                  key: key,
+                  newvalue: localCopy,
+                  driver: self.driver()
+                });
+              }
+              deferred.resolve(localCopy);
+            })
+            .catch(function withError(error) {
+              self.onError(data, args, self.setItem, deferred);
+            });
 
           return deferred.promise;
         }
