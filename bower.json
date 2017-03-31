@@ -36,7 +36,7 @@
     "angular-mocks": "1.2.x - 1.6.x"
   },
   "dependencies": {
-    "localforage": "~1.4",
+    "localforage": "~1.5",
     "angular": "1.2.x - 1.6.x"
   }
 }
