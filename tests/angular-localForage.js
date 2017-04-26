@@ -184,6 +184,7 @@ describe('Module: LocalForageModule', function() {
   it('setItem and getItem should work', function(done) {
     var interval = triggerDigests();
     var objectToStore = {
+      $$hashKey: 'object:1',
       name: 'Scott Trinh'
     };
 
@@ -191,7 +192,7 @@ describe('Module: LocalForageModule', function() {
 
     $localForage.setItem('myObject', objectToStore).then(function(data) {
       expect(data).toEqual({ name: 'Scott Trinh' });
-      expect($localForage._localforage.setItem.calls.mostRecent().args[1]).toBe(objectToStore);
+      expect($localForage._localforage.setItem.calls.mostRecent().args[1]).toEqual({ name: 'Scott Trinh'});
 
       $localForage.getItem('myObject').then(function(data) {
         stopDigests(interval);
@@ -200,6 +201,84 @@ describe('Module: LocalForageModule', function() {
       }, done);
 
     }, done);
+  });
+
+  it('setItem should remove $$hashKey from nested arrays', function () {
+    var arrayToStore = [
+      {
+        collection: [
+          { $$hashKey: 'object:1' },
+          { $$hashKey: 'object:2' }
+        ],
+        deeperCollection: {
+          collection: [
+            { $$hashKey: 'object:3' },
+            { $$hashKey: 'object:4' }
+          ]
+        }
+      }
+    ];
+
+    $localForage.setItem('myArray', arrayToStore).then(function (data) {
+      expect(data).toEqual([
+        {
+          collection: [{}, {}],
+          deeperCollection: {
+            collection: [{}, {}]
+          }
+        }
+      ]);
+      expect(arrayToStore).toEqual([
+        {
+          collection: [
+            { $$hashKey: 'object:1' },
+            { $$hashKey: 'object:2' }
+          ],
+          deeperCollection: {
+            collection: [
+              { $$hashKey: 'object:3' },
+              { $$hashKey: 'object:4' }
+            ]
+          }
+        }
+      ]);
+    });
+  });
+
+  it('setItem works with arrays of non-objects, and strips the $$hashKey of any object', function () {
+    var arrayToStore = [
+      [[]],
+      [{}, {$$hashKey: 'object:1'}],
+      'string',
+      true,
+      false,
+      null,
+      undefined,
+      {},
+    ];
+
+    $localForage.setItem('myWeirdArray', arrayToStore).then(function (data) {
+      expect(data).toEqual([
+        [[]],
+        [{}, {}],
+        'string',
+        true,
+        false,
+        null,
+        undefined,
+        {},
+      ]);
+      expect(arrayToStore).toEqual([
+        [[]],
+        [{}, {$$hashKey: 'object:1'}],
+        'string',
+        true,
+        false,
+        null,
+        undefined,
+        {},
+      ]);
+    });
   });
 
   it('setItem error should reject promise', function(done) {
@@ -482,7 +561,8 @@ describe('Module: LocalForageModule', function() {
       var setWith = $localForage._localforage.setItem.calls.argsFor(0)[1];
       var setWithNoPromise = $localForage._localforage.setItem.calls.argsFor(1)[1];
       expect(setWith).not.toBe(objectToStore);
-      expect(setWith.childObject).toBe(objectToStore.childObject);
+      expect(setWith.childObject).not.toBe(objectToStore.childObject);
+      expect(setWith.childObject).toEqual(objectToStore.childObject);
       expect(setWith).toEqual({
         childObject: {}
       });
@@ -491,7 +571,7 @@ describe('Module: LocalForageModule', function() {
         childObject: {}
       });
 
-      expect(setWithNoPromise).toBe(objectNoPromise);
+      expect(setWithNoPromise).toEqual(objectNoPromise);
 
       $localForage.getItem('myObject').then(function(data) {
         stopDigests(interval);
