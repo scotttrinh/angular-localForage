@@ -1,3 +1,13 @@
+<a name="1.3.6"></a>
+# 1.3.6 (2017-04-28)
+
+
+## Bug Fixes
+
+- Always remove $$hashKey from object or array objects
+ ([1237fac1](https://github.com/ocombe/angular-localForage/commit/1237fac1b6536a739887819b5175044908f6d866))
+
+
 <a name="1.3.5"></a>
 # 1.3.5 (2017-02-22)
 

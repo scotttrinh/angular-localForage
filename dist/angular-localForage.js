@@ -1,6 +1,6 @@
 /**
  * angular-localforage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v1.3.5
+ * @version v1.3.6
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
  * @author Olivier Combe <olivier.combe@gmail.com>
@@ -126,13 +126,7 @@
         } else {
           var deferred = $q.defer(),
             args = arguments,
-            localCopy = value;
-
-          //avoid $promises attributes from value objects, if present.
-          if(angular.isObject(localCopy) && angular.isDefined(localCopy.$promise)) {
-            localCopy = angular.extend({}, value);
-            delete localCopy.$promise;
-          }
+            localCopy = stripMeta(value);
 
           self._localforage.setItem(self.prefix() + key, localCopy)
             .then(function success() {
@@ -150,6 +144,26 @@
             });
 
           return deferred.promise;
+        }
+
+        function stripMeta(value) {
+          var copy;
+          if (angular.isArray(value)) {
+            return value.map(stripMeta);
+          } else if (angular.isObject(value) && !(value instanceof Blob)) {
+            copy = angular.extend({}, value);
+
+            angular.isDefined(copy.$promise) && delete copy.$promise;
+            angular.isDefined(copy.$$hashKey) && delete copy.$$hashKey;
+
+            return Object
+              .keys(copy)
+              .reduce(function stripEntries(acc, key) {
+                acc[key] = stripMeta(copy[key]);
+                return acc;
+              }, {});
+          }
+          return value;
         }
       };
 
