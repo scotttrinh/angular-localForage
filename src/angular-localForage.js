@@ -170,8 +170,7 @@
         var deferred = $q.defer(),
           args = arguments,
           self = this,
-          promise;
-        
+          promise;        
         if(angular.isArray(key)) {
           var res = [],
             found = 0;
