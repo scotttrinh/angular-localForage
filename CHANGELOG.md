@@ -1,3 +1,13 @@
+<a name="1.3.7"></a>
+# 1.3.7 (2017-05-12)
+
+
+## Bug Fixes
+
+- add support for getting/setting an object with a special constructor (e.g., Date, Blob etc.) (#140)
+ ([0089530c](https://github.com/ocombe/angular-localForage/commit/0089530c27bcf2b5b25cc933336f9ce197d27551))
+
+
 <a name="1.3.6"></a>
 # 1.3.6 (2017-04-28)
 
