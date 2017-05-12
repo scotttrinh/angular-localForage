@@ -143,7 +143,7 @@
           var copy;
           if (angular.isArray(value)) {
             return value.map(stripMeta);
-          } else if (angular.isObject(value) && !(value instanceof Blob)) {
+          } else if (angular.isObject(value) && value.constructor === Object) {
             copy = angular.extend({}, value);
 
             angular.isDefined(copy.$promise) && delete copy.$promise;
@@ -170,8 +170,7 @@
         var deferred = $q.defer(),
           args = arguments,
           self = this,
-          promise;
-
+          promise;        
         if(angular.isArray(key)) {
           var res = [],
             found = 0;
