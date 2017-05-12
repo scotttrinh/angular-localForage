@@ -183,20 +183,41 @@ describe('Module: LocalForageModule', function() {
 
   it('setItem and getItem should work', function(done) {
     var interval = triggerDigests();
+    var timestamp = new Date();
     var objectToStore = {
       $$hashKey: 'object:1',
-      name: 'Scott Trinh'
+      name: 'Scott Trinh',
+      date: timestamp
     };
 
     spyOn($localForage._localforage, 'setItem').and.callThrough();
 
     $localForage.setItem('myObject', objectToStore).then(function(data) {
-      expect(data).toEqual({ name: 'Scott Trinh' });
-      expect($localForage._localforage.setItem.calls.mostRecent().args[1]).toEqual({ name: 'Scott Trinh'});
+      expect(data).toEqual({ name: 'Scott Trinh', date: timestamp });
+      expect($localForage._localforage.setItem.calls.mostRecent().args[1]).toEqual({ name: 'Scott Trinh', date: timestamp});
 
       $localForage.getItem('myObject').then(function(data) {
         stopDigests(interval);
-        expect(data).toEqual({ name: 'Scott Trinh' });
+        expect(data).toEqual({ name: 'Scott Trinh', date: timestamp });
+        done();
+      }, done);
+
+    }, done);
+  });
+
+  it('setItem and getItem should work for a Date object', function(done) {
+    var interval = triggerDigests();
+    var timestamp = new Date();
+
+    spyOn($localForage._localforage, 'setItem').and.callThrough();
+
+    $localForage.setItem('myDateObject', timestamp).then(function(data) {
+      expect(data).toEqual(timestamp);
+      expect($localForage._localforage.setItem.calls.mostRecent().args[1]).toEqual(timestamp);
+
+      $localForage.getItem('myDateObject').then(function(data) {
+        stopDigests(interval);
+        expect(data).toEqual(timestamp);
         done();
       }, done);
 
