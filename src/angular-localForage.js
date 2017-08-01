@@ -170,7 +170,7 @@
         var deferred = $q.defer(),
           args = arguments,
           self = this,
-          promise;        
+          promise;
         if(angular.isArray(key)) {
           var res = [],
             found = 0;
@@ -269,24 +269,22 @@
 
       // Get an item and removes it from storage
       LocalForageInstance.prototype.pull = function pull(key) {
-        // throw error on undefined key
+        var self = this;
+        var itemValue;
+
         if(angular.isUndefined(key)) {
           throw new Error("You must define a key to pull");
         }
 
-        var self = this,
-          deferred = $q.defer(),
-          onError = function error(err) {
-            deferred.reject(err);
-          };
-
-        self.getItem(key).then(function success(value) {
-          self.removeItem(key).then(function success() {
-            deferred.resolve(value);
-          }, onError);
-        }, onError);
-
-        return deferred.promise;
+        return self
+          .getItem(key)
+          .then(function (value) {
+            itemValue = value;
+            return self.removeItem(key);
+          })
+          .then(function () {
+            return itemValue;
+          });
       };
 
       // Remove all data for this app from storage
@@ -301,6 +299,15 @@
           self.onError(data, args, self.clear, deferred);
         });
         return deferred.promise;
+
+        // return $q(function (resolve, reject) {
+        //   self._localforage
+        //     .clear()
+        //     .then(function (keys) {
+        //       resolve();
+        //     })
+        //     .catch(onError(arguments, self.clear));
+        // });
       };
 
       // Return the key for item at position n
@@ -331,7 +338,9 @@
           if(defaultConfig.oldPrefix && self.driver() === 'localStorageWrapper') {
             var tempKeyList = [];
             for(var i = 0, len = keyList.length; i < len; i++) {
-              tempKeyList.push(keyList[i].substr(self.prefix().length, keyList[i].length));
+              tempKeyList.push(
+                keyList[i].substr(self.prefix().length, keyList[i].length)
+              );
             }
             keyList = tempKeyList;
           }
@@ -489,8 +498,32 @@
         }
       };
 
+      function onError(args, fct) {
+        return function(err) {
+          return $q(function (resolve, reject) {
+            if(((angular.isObject(err) && err.name ? err.name === 'InvalidStateError' : (angular.isString(err) && err === 'InvalidStateError')) && this.driver() === 'asyncStorage')
+               || (angular.isObject(err) && err.code && err.code === 5)) {
+              var self = this;
+
+              self.setDriver('localStorageWrapper').then(function() {
+                fct.apply(self, args).then(function(item) {
+                  resolve(item);
+                }, function(data) {
+                  reject(data);
+                });
+              }, function() {
+                reject(err);
+              });
+            } else {
+              reject(err);
+            }
+          });
+        };
+      }
+
       lfInstances[defaultConfig.name] = new LocalForageInstance();
       return lfInstances[defaultConfig.name];
+
     }]
   });
 
@@ -510,4 +543,3 @@
 
   return angularLocalForage.name;
 });
-
