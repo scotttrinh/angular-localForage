@@ -502,7 +502,7 @@ describe('Module: LocalForageModule, Functional', function () {
     });
   });
 
-  describe('#bind and #unbind', function () {
+  describe('#unbind', function () {
     var $scope;
 
     beforeEach(function () {
@@ -545,33 +545,6 @@ describe('Module: LocalForageModule, Functional', function () {
             })
             .then(done, done);
         });
-      });
-    });
-
-    describe('when the $scope value changes', function () {
-      beforeEach(function (done) {
-        promise = $localForage
-          .bind($scope, 'key')
-          .then(done, done);
-      });
-
-      fit('changes the value in $localForage', function (done) {
-        window.setTimeout(function () {
-          promise
-            .then(function () {
-              console.log('changing scope key', $scope.key);
-              $scope.key = 'changed';
-              console.log('changed scope key', $scope.key);
-              return $q.resolve();
-            })
-            .then(function () {
-              return $localForage.getItem('key');
-            })
-            .then(function (resolved) {
-              expect(resolved).toBe('changed');
-              done();
-            });
-        }, 1000);
       });
     });
   });
