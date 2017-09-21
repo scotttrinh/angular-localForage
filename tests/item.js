@@ -289,7 +289,7 @@ describe('Module: LocalForageModule, Item', function () {
   describe('#iterate', function () {
     beforeEach(function () {
       spyOn($window.localforage, 'iterate').and.callFake(function (callback) {
-        callback('value', 'key');
+        callback('value', 'key', 'iterationNumber');
         return $q.resolve();
       });
     });
@@ -310,7 +310,7 @@ describe('Module: LocalForageModule, Item', function () {
       });
 
       it('calls the callback', function () {
-        expect(callbackSpy).toHaveBeenCalledWith('value', 'key');
+        expect(callbackSpy).toHaveBeenCalledWith('value', 'key', 'iterationNumber');
       });
     });
   });
