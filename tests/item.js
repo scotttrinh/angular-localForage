@@ -219,7 +219,6 @@ describe('Module: LocalForageModule, Item', function () {
           spyOn($window.localforage, 'iterate').and.callFake(function (callback) {
             [[4, 'a'], [undefined, 'b'], [6, 'c']].forEach(function (pair) {
               callback.apply(null, pair);
-              console.log(pair);
             });
 
             return $q.resolve([4, undefined, 6]);
@@ -266,7 +265,6 @@ describe('Module: LocalForageModule, Item', function () {
           spyOn($window.localforage, 'iterate').and.callFake(function (callback) {
             [[4, 'a'], [5, 'b'], [6, 'c']].forEach(function (pair) {
               callback.apply(null, pair);
-              console.log(pair);
             });
 
             return $q.resolve([4, undefined, 6]);
