@@ -107,6 +107,8 @@
         }
 
         var self = this;
+        var args = arguments;
+        var localCopy;
 
         if(angular.isArray(key)) {
           if(!angular.isArray(value)) {
@@ -116,28 +118,24 @@
           return $q.all(key.map(function (k, index) {
             return self.setItem(k, value[index]);
           }));
-        } else {
-          var deferred = $q.defer(),
-            args = arguments,
-            localCopy = stripMeta(value);
-
-          self._localforage.setItem(self.prefix() + key, localCopy)
-            .then(function success() {
-              if(notify.setItem) {
-                $rootScope.$broadcast('LocalForageModule.setItem', {
-                  key: key,
-                  newvalue: localCopy,
-                  driver: self.driver()
-                });
-              }
-              deferred.resolve(localCopy);
-            })
-            .catch(function withError(error) {
-              self.onError(error, args, self.setItem, deferred);
-            });
-
-          return deferred.promise;
         }
+
+        localCopy = stripMeta(value);
+
+        return self._localforage
+          .setItem(self.prefix() + key, localCopy)
+          .then(function success() {
+            if(notify.setItem) {
+              $rootScope.$broadcast('LocalForageModule.setItem', {
+                key: key,
+                newvalue: localCopy,
+                driver: self.driver()
+              });
+            }
+
+            return localCopy;
+          })
+          .catch(onError(args, self.setItem));
 
         function stripMeta(value) {
           var copy;
@@ -386,7 +384,7 @@
         if(angular.isString(opts)) {
           opts = {
             key: opts
-          }
+          };
         } else if(!angular.isObject(opts) || angular.isUndefined(opts.key)) {
           throw new Error("You must define a key to bind");
         }
@@ -410,27 +408,29 @@
         var scopeKey = opts.scopeKey || opts.key,
           model = $parse(scopeKey);
 
-        return self.getItem(opts.key).then(function(item) {
-          if (item !== null) { // If it does exist assign it to the $scope value
+        return self
+          .getItem(opts.key, true)
+          .then(function(item) {
             model.assign($scope, item);
-          } else if(!angular.isUndefined(opts.defaultValue)) { // If a value doesn't already exist store it as is
+            return item;
+          })
+          .catch(function () {
             model.assign($scope, opts.defaultValue);
-            self.setItem(opts.key, opts.defaultValue);
-          }
-
-          // Register a listener for changes on the $scope value
-          // to update the localForage value
-          if(angular.isDefined(watchers[opts.key])) {
-            watchers[opts.key]();
-          }
-
-          watchers[opts.key] = $scope.$watch(scopeKey, function(val) {
-            if(angular.isDefined(val)) {
-              self.setItem(opts.key, val);
+            return self.setItem(opts.key, opts.defaultValue);
+          })
+          .then(function (item) {
+            if(angular.isDefined(watchers[opts.key])) {
+              watchers[opts.key]();
             }
-          }, true);
-          return item;
-        });
+
+            watchers[opts.key] = $scope.$watch(scopeKey, function(val) {
+              if(angular.isDefined(val)) {
+                self.setItem(opts.key, val);
+              }
+            }, true);
+
+            return item;
+          });
       };
 
       /**
@@ -500,24 +500,18 @@
 
       function onError(args, fct) {
         return function(err) {
-          return $q(function (resolve, reject) {
-            if(((angular.isObject(err) && err.name ? err.name === 'InvalidStateError' : (angular.isString(err) && err === 'InvalidStateError')) && this.driver() === 'asyncStorage')
-               || (angular.isObject(err) && err.code && err.code === 5)) {
-              var self = this;
+          if(((angular.isObject(err) && err.name ? err.name === 'InvalidStateError' : (angular.isString(err) && err === 'InvalidStateError')) && this.driver() === 'asyncStorage')
+             || (angular.isObject(err) && err.code && err.code === 5)) {
+            var self = this;
 
-              self.setDriver('localStorageWrapper').then(function() {
-                fct.apply(self, args).then(function(item) {
-                  resolve(item);
-                }, function(data) {
-                  reject(data);
-                });
-              }, function() {
-                reject(err);
+            return self
+              .setDriver('localStorageWrapper')
+              .then(function () {
+                return fct.apply(self, args);
               });
-            } else {
-              reject(err);
-            }
-          });
+          }
+
+          return $q.reject(err);
         };
       }
 
