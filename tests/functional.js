@@ -1,6 +1,5 @@
 describe('Module: LocalForageModule, Functional', function () {
   var $localForage;
-  var $localForageProvider;
   var $rootScope;
   var $timeout;
   var $q;
@@ -12,8 +11,8 @@ describe('Module: LocalForageModule, Functional', function () {
 
   beforeEach(module('app'));
 
-  beforeEach(module(function (_$localForageProvider_) {
-    $localForageProvider = _$localForageProvider_;
+  beforeEach(module(function ($localForageProvider) {
+    $localForageProvider.setNotify(true, true);
   }));
 
   beforeEach(inject(function (_$localForage_, _$rootScope_, _$timeout_, _$q_) {
@@ -28,9 +27,6 @@ describe('Module: LocalForageModule, Functional', function () {
     $localForage
       .clear()
       .then(function () {
-        $localForage = $localForage.createInstance({
-          name: ++instanceVersion
-        });
         window.clearInterval(interval);
         return;
       })
@@ -545,6 +541,31 @@ describe('Module: LocalForageModule, Functional', function () {
             })
             .then(done, done);
         });
+      });
+    });
+  });
+
+  describe('#bind', function () {
+    var $scope;
+    var interval;
+
+    beforeEach(function (done) {
+      $scope = $rootScope.$new();
+      interval = window.setInterval(() => $rootScope.$digest(), 10);
+      $localForage.bind($scope, 'key').then(done).catch(done);
+    });
+
+    it('saves changes made to the scope key', function (done) {
+      $scope.key = 'changed';
+
+      $scope.$on('LocalForageModule.setItem', function () {
+        $localForage
+          .getItem('key')
+          .then(function (value) {
+            expect(value).toBe('changed');
+            window.clearInterval(interval);
+            done();
+          });
       });
     });
   });
