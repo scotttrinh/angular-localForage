@@ -156,13 +156,33 @@ You can use multiple instances of localForage at the same time. To create a new 
 		name: '2nd',
 		driver: 'localStorageWrapper'
 	});
+
+    var lf3 = $localForage.createInstance({
+        name: '3rd',
+        storeName: 'kvpairs'
+    });
 ```
 
 The parameters will inherit the default parameters that you might have configured in the config phase of your application (See [above](#configure-the-provider-) for details), but the new config object will overwrite them.
 It means that you can have one instance using localStorage, and one instance using indexedDB/WebSQL, at the same time !
 The instance will take the name that you will define in the config object. You can get an instance previously created by using the `instance` method:
 ```js
+    // DEPRECATED
     var lf2 = $localForage.instance('2nd');
+
+    // NEW USAGE
+    var lf2 = $localForage.instance({
+        name: '2nd'
+    });
+
+    var lf3 = $localForage.instance({
+        name: '3rd',
+        storeName: 'kvpairs'
+    });
+
+    var lf4 = $localForage.instance({
+        storeName: 'example_store'
+    });
 ```
 
 The `instance` method will return the default instance if you don't give a name parameter.

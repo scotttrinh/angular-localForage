@@ -639,4 +639,74 @@ describe('Module: LocalForageModule', function() {
       }, done);
     });
   });
+
+  describe("createInstance", function () {
+    beforeEach(function () {
+      $localForage.createInstance({
+        name: 'DUPLICATE_INSTANCE_NAME'
+      });
+    });
+    it('should create a new instance', function () {
+      expect($localForage.createInstance({
+        name: 'TEST_INSTANCE'
+      })).toBeDefined();
+    });
+
+    it('should throw error if trying to create duplicate instance.',
+       function () {
+      expect($localForage.createInstance.bind($localForage, {
+        name: 'DUPLICATE_INSTANCE_NAME'
+      })).toThrowError(/already defined/);
+    });
+
+    it('should create instance with same name, different storeName',
+       function () {
+      expect($localForage.createInstance.bind($localForage, {
+        name: 'DUPLICATE_INSTANCE_NAME',
+        storeName: 'DIFFERENT_STORE_NAME'
+      })).not.toThrowError(/already defined/);
+    });
+  });
+
+  describe("instance", function () {
+    beforeEach(function () {
+      $localForage.createInstance({
+        name: 'TEST_INSTANCE_1'
+      });
+      $localForage.createInstance({
+        name: 'TEST_INSTANCE_2',
+        storeName: 'TEST_STORE_NAME_1'
+      });
+      $localForage.createInstance({
+        name: 'TEST_INSTANCE_2',
+        storeName: 'TEST_STORE_NAME_2'
+      });
+    });
+
+    it('should get instance by name', function () {
+      expect($localForage.instance({
+        name: 'TEST_INSTANCE_1'
+      })).toBeDefined();
+    });
+
+    it('should throw exception if instance not exists', function () {
+      expect($localForage.instance.bind($localForage, {
+        name: 'NON_EXISTENT'
+      })).toThrowError();
+    });
+
+    it('should get instances with same name, different storeNames',
+       function () {
+         var instance1 = $localForage.instance({
+           name: 'TEST_INSTANCE_2',
+           storeName: 'TEST_STORE_NAME_1'
+         });
+         var instance2 = $localForage.instance({
+           name: 'TEST_INSTANCE_2',
+           storeName: 'TEST_STORE_NAME_2'
+         });
+         expect(instance1).not.toBe(instance2);
+       }
+    );
+  });
 });

@@ -22,7 +22,8 @@
   angularLocalForage.provider('$localForage', function() {
     var lfInstances = {},
       defaultConfig = {
-        name: 'lf'
+        name: 'lf',
+        storeName: 'keyvaluepairs',
       },
     // Send signals for each of the following actions ?
       notify = {
@@ -59,14 +60,17 @@
       LocalForageInstance.prototype.createInstance = function createInstance(config) {
         if(angular.isObject(config)) { // create new instance
           config = angular.extend({}, defaultConfig, config);
-          if(angular.isDefined(lfInstances[config.name])) {
-            throw new Error('A localForage instance with the name ' + config.name + ' is already defined.');
+          var lfInstanceName = config.name + '#' + config.storeName;
+          if(angular.isDefined(lfInstances[lfInstanceName])) {
+              throw new Error('A localForage instance with the name ' +
+                              config.name + ' and storeName ' +
+                              config.storeName + ' is already defined.');
           }
 
-          lfInstances[config.name] = new LocalForageInstance(config);
-          return lfInstances[config.name];
+          lfInstances[lfInstanceName] = new LocalForageInstance(config);
+          return lfInstances[lfInstanceName];
         } else {
-          throw new Error('The parameter should be a config object.')
+          throw new Error('The parameter should be a config object.');
         }
       };
 
@@ -74,13 +78,33 @@
         if(angular.isUndefined(name)) {
           return lfInstances[defaultConfig.name];
         } else if(angular.isString(name)) {
-          if(angular.isDefined(lfInstances[name])) {
-            return lfInstances[name];
+          var lfInstanceName = name + '#' + defaultConfig.storeName;
+          if(angular.isDefined(lfInstances[lfInstanceName])) {
+            return lfInstances[lfInstanceName];
           } else {
-            throw new Error('No localForage instance of that name exists.')
+            throw new Error('No localForage instance of that name exists.');
+          }
+        } else if(angular.isObject(name)) {
+          // if it is an object with {name, storeName} properties,
+          // return corresponding instance 
+          var instanceObj = name;
+          if(!angular.isDefined(instanceObj.name) &&
+             !angular.isDefined(instanceObj.storeName)) {
+            throw new Error('instance parameter object needs to contain name or storeName');
+          }
+          var n = (angular.isDefined(instanceObj.name)
+                      ? instanceObj.name
+                      : defaultConfig.name),
+              sn = (angular.isDefined(instanceObj.storeName)
+                      ? instanceObj.storeName
+                      : defaultConfig.storeName);
+          if(angular.isDefined(lfInstances[n + '#' + sn])) {
+            return lfInstances[n + '#' + sn];
+          } else {
+            throw new Error('No localForage instance of that name exists.');
           }
         } else {
-          throw new Error('The parameter should be a string.')
+          throw new Error('The parameter should be a string or object.');
         }
       };
 
