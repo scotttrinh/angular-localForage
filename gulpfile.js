@@ -5,7 +5,14 @@ var gulp = require('gulp'),
 gulp.task('karma', function(done) {
   var karma = require('karma').server;
   karma.start({
-    configFile: __dirname + '/karma.conf.js',
+    frameworks: ['jasmine'],
+    files: [
+      'bower_components/angular/angular.js',
+      'bower_components/angular-mocks/angular-mocks.js',
+      'bower_components/localforage/dist/localforage.js',
+      'src/angular-localForage.js',
+      'tests/angular-localForage.js'
+    ],
     singleRun: true,
     browsers: ['Firefox', 'Chrome']
   }, done);
