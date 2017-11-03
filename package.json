@@ -30,7 +30,7 @@
     "url": "https://github.com/ocombe/angular-localForage/issues"
   },
   "dependencies": {
-    "localforage": "~1.4"
+    "localforage": "~1.5"
   },
   "devDependencies": {
     "gulp": "~3.9.0",
