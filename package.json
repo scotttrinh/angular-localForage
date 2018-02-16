@@ -1,6 +1,6 @@
 {
   "name": "angular-localforage",
-  "version": "1.3.7",
+  "version": "1.3.8",
   "description": "Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)",
   "license": "MIT",
   "main": "dist/angular-localForage.js",

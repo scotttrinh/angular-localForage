@@ -1,6 +1,6 @@
 /**
  * angular-localforage - Angular service & directive for https://github.com/mozilla/localForage (Offline storage, improved.)
- * @version v1.3.7
+ * @version v1.3.8
  * @link https://github.com/ocombe/angular-localForage
  * @license MIT
  * @author Olivier Combe <olivier.combe@gmail.com>
@@ -114,6 +114,8 @@
         }
 
         var self = this;
+        var args = arguments;
+        var localCopy;
 
         if(angular.isArray(key)) {
           if(!angular.isArray(value)) {
@@ -123,28 +125,24 @@
           return $q.all(key.map(function (k, index) {
             return self.setItem(k, value[index]);
           }));
-        } else {
-          var deferred = $q.defer(),
-            args = arguments,
-            localCopy = stripMeta(value);
-
-          self._localforage.setItem(self.prefix() + key, localCopy)
-            .then(function success() {
-              if(notify.setItem) {
-                $rootScope.$broadcast('LocalForageModule.setItem', {
-                  key: key,
-                  newvalue: localCopy,
-                  driver: self.driver()
-                });
-              }
-              deferred.resolve(localCopy);
-            })
-            .catch(function withError(error) {
-              self.onError(error, args, self.setItem, deferred);
-            });
-
-          return deferred.promise;
         }
+
+        localCopy = stripMeta(value);
+
+        return self._localforage
+          .setItem(self.prefix() + key, localCopy)
+          .then(function success() {
+            if(notify.setItem) {
+              $rootScope.$broadcast('LocalForageModule.setItem', {
+                key: key,
+                newvalue: localCopy,
+                driver: self.driver()
+              });
+            }
+
+            return localCopy;
+          })
+          .catch(onError(args, self.setItem));
 
         function stripMeta(value) {
           var copy;
@@ -177,7 +175,7 @@
         var deferred = $q.defer(),
           args = arguments,
           self = this,
-          promise;        
+          promise;
         if(angular.isArray(key)) {
           var res = [],
             found = 0;
@@ -276,24 +274,22 @@
 
       // Get an item and removes it from storage
       LocalForageInstance.prototype.pull = function pull(key) {
-        // throw error on undefined key
+        var self = this;
+        var itemValue;
+
         if(angular.isUndefined(key)) {
           throw new Error("You must define a key to pull");
         }
 
-        var self = this,
-          deferred = $q.defer(),
-          onError = function error(err) {
-            deferred.reject(err);
-          };
-
-        self.getItem(key).then(function success(value) {
-          self.removeItem(key).then(function success() {
-            deferred.resolve(value);
-          }, onError);
-        }, onError);
-
-        return deferred.promise;
+        return self
+          .getItem(key)
+          .then(function (value) {
+            itemValue = value;
+            return self.removeItem(key);
+          })
+          .then(function () {
+            return itemValue;
+          });
       };
 
       // Remove all data for this app from storage
@@ -308,6 +304,15 @@
           self.onError(data, args, self.clear, deferred);
         });
         return deferred.promise;
+
+        // return $q(function (resolve, reject) {
+        //   self._localforage
+        //     .clear()
+        //     .then(function (keys) {
+        //       resolve();
+        //     })
+        //     .catch(onError(arguments, self.clear));
+        // });
       };
 
       // Return the key for item at position n
@@ -338,7 +343,9 @@
           if(defaultConfig.oldPrefix && self.driver() === 'localStorageWrapper') {
             var tempKeyList = [];
             for(var i = 0, len = keyList.length; i < len; i++) {
-              tempKeyList.push(keyList[i].substr(self.prefix().length, keyList[i].length));
+              tempKeyList.push(
+                keyList[i].substr(self.prefix().length, keyList[i].length)
+              );
             }
             keyList = tempKeyList;
           }
@@ -384,7 +391,7 @@
         if(angular.isString(opts)) {
           opts = {
             key: opts
-          }
+          };
         } else if(!angular.isObject(opts) || angular.isUndefined(opts.key)) {
           throw new Error("You must define a key to bind");
         }
@@ -408,27 +415,29 @@
         var scopeKey = opts.scopeKey || opts.key,
           model = $parse(scopeKey);
 
-        return self.getItem(opts.key).then(function(item) {
-          if (item !== null) { // If it does exist assign it to the $scope value
+        return self
+          .getItem(opts.key, true)
+          .then(function(item) {
             model.assign($scope, item);
-          } else if(!angular.isUndefined(opts.defaultValue)) { // If a value doesn't already exist store it as is
+            return item;
+          })
+          .catch(function () {
             model.assign($scope, opts.defaultValue);
-            self.setItem(opts.key, opts.defaultValue);
-          }
-
-          // Register a listener for changes on the $scope value
-          // to update the localForage value
-          if(angular.isDefined(watchers[opts.key])) {
-            watchers[opts.key]();
-          }
-
-          watchers[opts.key] = $scope.$watch(scopeKey, function(val) {
-            if(angular.isDefined(val)) {
-              self.setItem(opts.key, val);
+            return self.setItem(opts.key, opts.defaultValue);
+          })
+          .then(function (item) {
+            if(angular.isDefined(watchers[opts.key])) {
+              watchers[opts.key]();
             }
-          }, true);
-          return item;
-        });
+
+            watchers[opts.key] = $scope.$watch(scopeKey, function(val) {
+              if(angular.isDefined(val)) {
+                self.setItem(opts.key, val);
+              }
+            }, true);
+
+            return item;
+          });
       };
 
       /**
@@ -496,8 +505,26 @@
         }
       };
 
+      function onError(args, fct) {
+        return function(err) {
+          if(((angular.isObject(err) && err.name ? err.name === 'InvalidStateError' : (angular.isString(err) && err === 'InvalidStateError')) && this.driver() === 'asyncStorage')
+             || (angular.isObject(err) && err.code && err.code === 5)) {
+            var self = this;
+
+            return self
+              .setDriver('localStorageWrapper')
+              .then(function () {
+                return fct.apply(self, args);
+              });
+          }
+
+          return $q.reject(err);
+        };
+      }
+
       lfInstances[defaultConfig.name] = new LocalForageInstance();
       return lfInstances[defaultConfig.name];
+
     }]
   });
 
@@ -517,4 +544,3 @@
 
   return angularLocalForage.name;
 });
-

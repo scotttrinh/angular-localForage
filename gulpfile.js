@@ -11,7 +11,7 @@ gulp.task('karma', function(done) {
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/localforage/dist/localforage.js',
       'src/angular-localForage.js',
-      'tests/angular-localForage.js'
+      'tests/*.js'
     ],
     singleRun: true,
     browsers: ['Firefox', 'Chrome']

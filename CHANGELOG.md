@@ -1,3 +1,13 @@
+<a name="1.3.8"></a>
+# 1.3.8 (2018-02-16)
+
+
+## Documentation
+
+- update travis link/shield
+ ([63f97d8d](https://github.com/ocombe/angular-localForage/commit/63f97d8d2bd589aca7e5be64ce7f69e3b5c88e82))
+
+
 <a name="1.3.7"></a>
 # 1.3.7 (2017-05-12)
 
