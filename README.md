@@ -184,7 +184,7 @@ gulp karma
 It will launch Chrome and Firefox, edit the `karma` task in `gulpfile.js` if you want to change
 something. We could use more tests, see "contributing" below.
 
-##Contributing
+## Contributing
 
 I would love to have community contributions and support! A few areas where could use help right now:
 
